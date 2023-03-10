@@ -1,11 +1,23 @@
 from django.contrib import admin
 from .models import CategoryRoom, HotelRoom, Client
 from django.contrib.auth.admin import UserAdmin
-
+from django.utils.html import format_html
 
 class CustomClient(admin.ModelAdmin):
+    @admin.display(description='ФИО')
+    def fio(self, obj):
+        return ("%s %s %s" % (obj.last_name, obj.first_name, obj.surname))
+
+    @admin.display(description='Пол')
+    def pol(self, obj):
+        if obj.sex == 'м':
+            return "Мужской"
+        else:
+            return 'Женский'
     model = Client
-    list_display = ['first_name', 'last_name', 'surname', 'phone']
+    list_display = ['fio', 'phone', 'email']
+    list_filter = ['sex', 'date_birthday']
+    search_fields = ['first_name', 'last_name', 'surname', 'num_doc', 'phone', 'email']
     fieldsets = (
         ( 
             None, 
@@ -16,7 +28,7 @@ class CustomClient(admin.ModelAdmin):
                     'last_name', 
                     'surname', 
                     'date_birthday',
-                    'sex'
+                    'pol'
                 )
             }
         ),

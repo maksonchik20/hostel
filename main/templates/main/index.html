@@ -1,4 +1,6 @@
 {% load static %}
+{% load render_table from django_tables2 %}
+{% load export_url from django_tables2 %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -6,11 +8,20 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
     <title>{{title}}</title>
 </head>
 <body>
     <h1>{{text}}</h1>
-    <ul>
+    <hr>
+    {% render_table table %}
+    <hr>
+    {% for format in export_formats %}
+    <a href="{% export_url format %}">
+        download  <code>.{{ format }}</code>
+    </a>
+    {% endfor %}
+    <!-- <ul>
         {% for client in clients %}
             <li>
                 {% if client.sex == 'м' %}
@@ -23,6 +34,6 @@
                 
             </li>
         {% endfor %}
-    </ul>
+    </ul> -->
 </body>
 </html>
