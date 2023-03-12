@@ -7,7 +7,6 @@ class CustomClient(admin.ModelAdmin):
     @admin.display(description='ФИО')
     def fio(self, obj):
         return ("%s %s %s" % (obj.last_name, obj.first_name, obj.surname))
-
     @admin.display(description='Пол')
     def pol(self, obj):
         if obj.sex == 'м':
@@ -27,8 +26,7 @@ class CustomClient(admin.ModelAdmin):
                     'first_name',
                     'last_name', 
                     'surname', 
-                    'date_birthday',
-                    'pol'
+                    'date_birthday'
                 )
             }
         ),
