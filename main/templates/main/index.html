@@ -8,32 +8,20 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'main/index.css' %}" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
     <title>{{title}}</title>
 </head>
 <body>
-    <h1>{{text}}</h1>
-    <hr>
-    {% render_table table %}
-    <hr>
-    {% for format in export_formats %}
-    <a href="{% export_url format %}">
-        download  <code>.{{ format }}</code>
-    </a>
-    {% endfor %}
-    <!-- <ul>
-        {% for client in clients %}
-            <li>
-                {% if client.sex == 'м' %}
-                    Мужчина
-                {% endif %}
-                <br>
-                Имя: {{client.first_name}}
-                <br>
-                Фамилия: {{client.last_name}}
-                
-            </li>
-        {% endfor %}
-    </ul> -->
+    <div class="index-page-container">
+    <div class="index-page-header">
+        <h1>Горячая штучка</h1>
+        <h1>| {{header_text}}</h1>
+    </div>
+    <div class="index-page-content">
+        {% block content %}
+        {% endblock %}
+    </div>
+    </div>
 </body>
 </html>

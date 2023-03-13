@@ -15,6 +15,7 @@ def index(request):
         exporter = TableExport(export_format, table)
         return exporter.response(f"clients.{export_format}")
     data = {
+        'header_text': "Клиенты",
         'text': 'Клиенты',
         'title':'Клиенты',
         'clients': Client.objects.all(),
