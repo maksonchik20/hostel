@@ -78,7 +78,35 @@ class HotelRoom(models.Model):
     
 
 
+class Booking(models.Model):
+    client = models.ForeignKey(Client, on_delete=models.PROTECT, verbose_name="Клиент")
+    date_check_in = models.DateField(verbose_name='Дата заезда')
+    time_check_in = models.TimeField(verbose_name="Время заезда")
+    date_of_departure = models.DateField(verbose_name="Дата выезда")
+    time_of_departure = models.TimeField(verbose_name="Время выезда")
+    hotel_room = models.ForeignKey(HotelRoom, on_delete=models.PROTECT, verbose_name="Отель")
+    big_people = models.PositiveIntegerField(verbose_name="Взрослых")
+    small_people = models.PositiveIntegerField(verbose_name="Детей")
+    nights = models.PositiveIntegerField(help_text="Вы можете заполнить поле самостоятельно или оно заполнится само после сохранения на основе данных заезда и выезда", verbose_name="Ночей", null=True, blank=True)
 
+
+    def __str__(self):
+        return f"{self.date_check_in} - {self.date_of_departure} | Номер: {self.hotel_room.name}"
+    
+
+
+# signals
+
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from datetime import datetime, timedelta
+
+@receiver(post_save, sender=Booking)
+def update_stock(sender, instance, **kwargs):
+    instance.nights = (instance.date_of_departure - instance.date_check_in).days
+    post_save.disconnect(update_stock, sender=Booking)
+    instance.save()
+    post_save.connect(update_stock, sender=Booking)
 
 
 
