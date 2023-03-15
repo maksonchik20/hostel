@@ -1,0 +1,35 @@
+html, body, .index-page-container {
+    height: 100%;
+}
+
+.index-page-header {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    display: flex;
+    place-items: center;
+    flex-direction: row;
+    
+    background-color: rebeccapurple;
+}
+
+.index-page-header h1 {
+    margin-left: 2rem;
+    color: white;
+    text-align: center;
+    margin: 1rem;
+}
+
+.index-page-header h3 {
+    margin-left: 2rem;
+    color: rgb(207, 207, 207);
+    text-align: center;
+    margin: 10;
+}
+
+
+.index-page-content {
+    margin: 0;
+    padding: 0;
+    background-color: bisque;
+}
