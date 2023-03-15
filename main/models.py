@@ -38,20 +38,13 @@ class Hotel(models.Model):
         verbose_name_plural = 'Отели'
 
 class Client(models.Model):
-    SEX = (
-        ('м', 'м'),
-        ('ж', 'ж')
-    )
     TYPES_DOCUMENT = (
         ('Паспорт гражданина РФ', 'Паспорт гражданина РФ'),
         ('Свидетельство о рождении', 'Свидетельство о рождении')
     )
-    first_name = models.CharField(max_length=255, verbose_name='Имя')
-    last_name = models.CharField(max_length=255, verbose_name='Фамилия')
-    surname = models.CharField(max_length=255, verbose_name='Отчество')
-    phone = models.CharField(max_length=255, null=True, blank=True, verbose_name='Телефон')
+    fio = models.CharField(max_length=150, verbose_name='ФИО')
+    phone = models.CharField(max_length=255, null=True, blank=True, verbose_name='Телефон +7(9xx) xxx-xx-xx')
     date_birthday = models.DateField(null=True, blank=True, verbose_name='Дата рождения')
-    sex = models.CharField(choices=SEX, max_length=255, verbose_name='Пол')
     email = models.EmailField(verbose_name='Почта', blank=True)
     type_doc = models.CharField(choices=TYPES_DOCUMENT, max_length=255, verbose_name='Тип документа')
     series_doc = models.PositiveIntegerField(verbose_name='Серия')
@@ -67,7 +60,11 @@ class Client(models.Model):
         verbose_name_plural = 'Клиенты'
 
 
-
+class Quests(models.Model):
+    PAYERS = (
+        ('физ.лицо', 'физ.лицо'),
+        ('юр.лицо', 'юр.лицо')
+    )
 
 # class CategoryRoom(models.Model):
 #     name = models.CharField(max_length=150, verbose_name='Название')
@@ -110,40 +107,38 @@ class RoomOccupancy(models.Model):
     room = models.ForeignKey(HotelRoom, on_delete=models.PROTECT, verbose_name='Номер')
     date_check_in = models.DateField(verbose_name="Дата заезда")
     date_of_departure = models.DateField(verbose_name='Даты выезда')
-
     def __str__(self):
         return f"Номер: {self.room.name} Даты: {self.date_check_in} - {self.date_of_departure}"
-
     class Meta:
         verbose_name = 'Занятость номера'
         verbose_name_plural = 'Занятости номеров'
-    
     def clean(self):
         self.is_cleaned = True
         if self.date_check_in > self.date_of_departure:
             raise ValidationError("Дата заезда позже даты выезда!")
         super(RoomOccupancy, self).clean()
-
     def save(self, *args, **kwargs):
         if not self.is_cleaned:
             self.full_clean()
         super(RoomOccupancy, self).save(*args, **kwargs)
 
 class Booking(models.Model):
+    hotel = models.ForeignKey(Hotel, on_delete=models.PROTECT, verbose_name='Отель')
     client = models.ForeignKey(Client, on_delete=models.PROTECT, verbose_name="Клиент")
     date_check_in = models.DateField(verbose_name='Дата заезда')
-    time_check_in = models.TimeField(verbose_name="Время заезда")
     date_of_departure = models.DateField(verbose_name="Дата выезда")
-    time_of_departure = models.TimeField(verbose_name="Время выезда")
-    hotel_room = models.ForeignKey(HotelRoom, on_delete=models.PROTECT, verbose_name="Отель")
-    big_people = models.PositiveIntegerField(verbose_name="Взрослых")
-    small_people = models.PositiveIntegerField(verbose_name="Детей")
+    hotel_room = models.ForeignKey(HotelRoom, on_delete=models.PROTECT, verbose_name="Комната")
+    # big_people = models.PositiveIntegerField(verbose_name="Взрослых")
+    # small_people = models.PositiveIntegerField(verbose_name="Детей")
     nights = models.PositiveIntegerField(help_text="Вы можете заполнить поле самостоятельно или оно заполнится само после сохранения на основе данных заезда и выезда", verbose_name="Ночей", null=True, blank=True)
-
+    pays = models.PositiveIntegerField(verbose_name="Стоимость")
 
     def __str__(self):
         return f"{self.date_check_in} - {self.date_of_departure} | Номер: {self.hotel_room.name}"
     
+    class Meta:
+        verbose_name = 'Бронирование'
+        verbose_name_plural = 'Бронирования'
 
 
 # signals
