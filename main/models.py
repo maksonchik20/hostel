@@ -116,6 +116,17 @@ class RoomOccupancy(models.Model):
     class Meta:
         verbose_name = 'Занятость номера'
         verbose_name_plural = 'Занятости номеров'
+    
+    def clean(self):
+        self.is_cleaned = True
+        if self.date_check_in > self.date_of_departure:
+            raise ValidationError("Дата заезда позже даты выезда!")
+        super(RoomOccupancy, self).clean()
+
+    def save(self, *args, **kwargs):
+        if not self.is_cleaned:
+            self.full_clean()
+        super(RoomOccupancy, self).save(*args, **kwargs)
 
 class Booking(models.Model):
     client = models.ForeignKey(Client, on_delete=models.PROTECT, verbose_name="Клиент")
@@ -148,17 +159,14 @@ def update_stock(sender, instance, **kwargs):
     post_save.connect(update_stock, sender=Booking)
 
 
-@receiver(post_save, sender=RoomOccupancy)
-def update_stock(sender, instance, **kwargs):
-    if instance.date_check_in < instance.date_of_departure:
-        print('good')
-    else:
-        print('error')
-        raise ValidationError('Дата заезда позже даты выезда')
-    post_save.disconnect(update_stock, sender=RoomOccupancy)
-    instance.save()
-    post_save.connect(update_stock, sender=RoomOccupancy)
-
-
-
+# @receiver(post_save, sender=RoomOccupancy)
+# def update_stock(sender, instance, **kwargs):
+#     if instance.date_check_in < instance.date_of_departure:
+#         print('good')
+#     else:
+#         print('error')
+#         raise ValidationError('Дата заезда позже даты выезда')
+#     post_save.disconnect(update_stock, sender=RoomOccupancy)
+#     instance.save()
+#     post_save.connect(update_stock, sender=RoomOccupancy)
 
