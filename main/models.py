@@ -93,7 +93,7 @@ class HotelRoom(models.Model):
     )
     hotel = models.ForeignKey(Hotel, on_delete=models.PROTECT, verbose_name='Отель')
     name = models.CharField(max_length=10, verbose_name="Номер")
-    count_place = models.PositiveIntegerField(verbose_name='Количество мест')
+    count_place = models.PositiveIntegerField(verbose_name='Количество мест', blank=True, null=True)
     cat = models.CharField(choices=CAT, verbose_name="Категория", max_length=255)
     status = models.CharField(choices=STATUS, max_length=255, verbose_name="Статус")
 
