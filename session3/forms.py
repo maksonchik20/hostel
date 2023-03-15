@@ -2,7 +2,7 @@ import datetime
 from django import forms
 from main.models import Booking, Hotel, Client
 
-class ManageInHotelForm(forms.Form):
+class ManageHotelForm(forms.Form):
     hotel = forms.ModelChoiceField(queryset=Hotel.objects.all())
 
 class ManageInForm(forms.Form):
@@ -10,4 +10,11 @@ class ManageInForm(forms.Form):
     room = forms.ModelChoiceField(queryset=Booking.objects.filter(date_check_in=datetime.datetime.now()))
 
 class ManageOutForm(forms.Form):
-    room = forms.ModelChoiceField(queryset=Booking.objects.filter(date_of_departure=datetime.datetime.now()))
+    room = forms.ChoiceField(choices=())
+
+    def __init__(self, *args, **kwargs):
+        choices = kwargs.pop('choices', None)
+        print(choices)
+        super(ManageOutForm, self).__init__(*args, **kwargs)
+        if choices is not None:
+            self.fields['room'].choices = choices
