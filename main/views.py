@@ -5,7 +5,31 @@ from django.views.generic import ListView
 from .tables import ClientTable
 from django_tables2.export.export import TableExport
 from django_tables2.config import RequestConfig
+import random
 
+
+def create_data():
+    STATUS = (
+        ('Занят', 'Занят'),
+        ('Занят (грязный)', 'Занят (грязный)'),
+        ('Свободный (грязный)', 'Свободный (грязный)'),
+        ('Свободный (чистый)', 'Свободный (чистый)')
+    )
+    CAT = (
+        ('Стандарт', 'Стандарт'),
+        ('Люкс', 'Люкс'),
+        ('Апартамент', 'Апартамент')
+    )
+    for hotel in Hotel.objects.all():
+        for i in range(1, 7):
+            HotelRoom.objects.create(hotel=hotel, name=i, count_place=2, cat=CAT[0][0], status=random.choice(STATUS))
+    for hotel in Hotel.objects.all():
+        for i in range(7, 10):
+            HotelRoom.objects.create(hotel=hotel, name=i, count_place=2, cat=CAT[1][0], status=random.choice(STATUS))
+    for hotel in Hotel.objects.all():
+        for i in range(10, 12):
+            HotelRoom.objects.create(hotel=hotel, name=i, count_place=2, cat=CAT[2][0], status=random.choice(STATUS))
+    
 def index(request):
     # здесь можно получить данные из бд и передать их также в data
     table = ClientTable(Client.objects.all())
@@ -22,7 +46,9 @@ def index(request):
         'table': table,
         'export_formats': ['xls', 'json', 'xlsx', 'yaml']
         }
-    Booking.objects.all().delete()
+    create_data()
+    print('good create')
+    # Booking.objects.all().delete()
     return render(request, 'main/index.html', data)
 
 def root(request):
