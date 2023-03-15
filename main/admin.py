@@ -1,31 +1,20 @@
 from django.contrib import admin
-from .models import HotelRoom, Client, Booking, RoomOccupancy, Hotel, Region
+from .models import HotelRoom, Client, Booking, RoomOccupancy, Hotel, Region, Pays
 from django.contrib.auth.admin import UserAdmin
 from django.utils.html import format_html
 
 class CustomClient(admin.ModelAdmin):
-    @admin.display(description='ФИО')
-    def fio(self, obj):
-        return ("%s %s %s" % (obj.last_name, obj.first_name, obj.surname))
-    @admin.display(description='Пол')
-    def pol(self, obj):
-        if obj.sex == 'м':
-            return "Мужской"
-        else:
-            return 'Женский'
     model = Client
     list_display = ['fio', 'phone', 'email']
-    list_filter = ['sex', 'date_birthday']
-    search_fields = ['first_name', 'last_name', 'surname', 'num_doc', 'phone', 'email']
+    list_filter = ['date_birthday']
+    search_fields = ['fio', 'num_doc', 'phone', 'email']
     fieldsets = (
         ( 
             None, 
             {
                 'fields': 
                 (
-                    'first_name',
-                    'last_name', 
-                    'surname', 
+                    'fio', 
                     'date_birthday'
                 )
             }
@@ -59,12 +48,13 @@ class BookingAdmin(admin.ModelAdmin):
     pass
     
 
-# admin.site.register(Client, CustomClient)
+admin.site.register(Client, CustomClient)
 admin.site.register(HotelRoom)
 admin.site.register(Booking, BookingAdmin)
 admin.site.register(RoomOccupancy)
 admin.site.register(Hotel)
 admin.site.register(Region)
+admin.site.register(Pays)
 
 
 

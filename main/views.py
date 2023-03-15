@@ -22,6 +22,7 @@ def index(request):
         'table': table,
         'export_formats': ['xls', 'json', 'xlsx', 'yaml']
         }
+    Booking.objects.all().delete()
     return render(request, 'main/index.html', data)
 
 def root(request):
