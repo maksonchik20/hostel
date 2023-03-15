@@ -29,6 +29,7 @@ DEBUG = True
 ALLOWED_HOSTS = ['*'] # 'hostelBusiness.pythonanywhere.com'
 
 
+
 # Application definition
 
 INSTALLED_APPS = [
