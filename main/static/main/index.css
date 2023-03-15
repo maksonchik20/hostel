@@ -33,3 +33,7 @@ html, body, .index-page-container {
     padding: 0;
     background-color: bisque;
 }
+
+.index-page-content a {
+    font-size: large;
+}

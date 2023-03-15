@@ -24,5 +24,5 @@ def index(request):
         }
     return render(request, 'main/index.html', data)
 
-def some_page(request):
-    return HttpResponse('hello')
+def root(request):
+    return render(request, 'main/root.html')
