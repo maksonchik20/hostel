@@ -42,7 +42,7 @@ class Client(models.Model):
         ('Паспорт гражданина РФ', 'Паспорт гражданина РФ'),
         ('Свидетельство о рождении', 'Свидетельство о рождении')
     )
-    fio = models.CharField(max_length=150, verbose_name='ФИО')
+    fio = models.CharField(max_length=150, verbose_name='ФИО',blank=True, null=True)
     phone = models.CharField(max_length=255, null=True, blank=True, verbose_name='Телефон +7(9xx) xxx-xx-xx')
     date_birthday = models.DateField(null=True, blank=True, verbose_name='Дата рождения')
     email = models.EmailField(verbose_name='Почта', blank=True)
@@ -53,7 +53,7 @@ class Client(models.Model):
     issued_by_doc = models.CharField(max_length=255, verbose_name="Кем выдан")
 
     def __str__(self):
-        return f'{self.first_name} {self.last_name}'
+        return f'{self.fio}'
     
     class Meta:
         verbose_name = 'Клиент'
@@ -122,20 +122,26 @@ class RoomOccupancy(models.Model):
             self.full_clean()
         super(RoomOccupancy, self).save(*args, **kwargs)
 
+class Pays(models.Model):
+    booking = models.ForeignKey("Booking", on_delete=models.PROTECT)
+    sums = models.PositiveIntegerField(verbose_name="Сумма оплаты")
+    prepayment = models.PositiveIntegerField(verbose_name="Предоплата")
+
 class Booking(models.Model):
-    hotel = models.ForeignKey(Hotel, on_delete=models.PROTECT, verbose_name='Отель')
+    hotel = models.ForeignKey(Hotel, on_delete=models.PROTECT, verbose_name='Отель', null=True, blank=True)
     client = models.ForeignKey(Client, on_delete=models.PROTECT, verbose_name="Клиент")
     date_check_in = models.DateField(verbose_name='Дата заезда')
     date_of_departure = models.DateField(verbose_name="Дата выезда")
     hotel_room = models.ForeignKey(HotelRoom, on_delete=models.PROTECT, verbose_name="Комната")
-    # big_people = models.PositiveIntegerField(verbose_name="Взрослых")
-    # small_people = models.PositiveIntegerField(verbose_name="Детей")
     nights = models.PositiveIntegerField(help_text="Вы можете заполнить поле самостоятельно или оно заполнится само после сохранения на основе данных заезда и выезда", verbose_name="Ночей", null=True, blank=True)
-    pays = models.PositiveIntegerField(verbose_name="Стоимость")
+    pay = models.PositiveIntegerField(verbose_name="Стоимость", null=True, blank=True)
+    flag = models.BooleanField(verbose_name="Бронь подтверждена", default=False)
 
     def __str__(self):
         return f"{self.date_check_in} - {self.date_of_departure} | Номер: {self.hotel_room.name}"
-    
+    # def save(self, *args, **kwargs):
+    #     print(args, kwargs)
+    #     super(Booking, self).save(*args, **kwargs)  
     class Meta:
         verbose_name = 'Бронирование'
         verbose_name_plural = 'Бронирования'
@@ -143,16 +149,27 @@ class Booking(models.Model):
 
 # signals
 
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from datetime import datetime, timedelta
 
 @receiver(post_save, sender=Booking)
 def update_stock(sender, instance, **kwargs):
     instance.nights = (instance.date_of_departure - instance.date_check_in).days
+    booking = Booking.objects.get(pk=instance.pk)
+    print(booking)
+    if kwargs['created']:
+        Pays.objects.create(booking=booking, sums=instance.pay, prepayment=0)
     post_save.disconnect(update_stock, sender=Booking)
     instance.save()
     post_save.connect(update_stock, sender=Booking)
+
+# @receiver(pre_save, sender=Booking)
+# def for_book(sender, instance, **kwargs):
+#     print(instance, kwargs)
+#     post_save.disconnect(for_book, sender=Booking)
+#     instance.save()
+#     post_save.connect(for_book, sender=Booking)
 
 
 # @receiver(post_save, sender=RoomOccupancy)

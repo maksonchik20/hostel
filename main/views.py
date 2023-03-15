@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from .models import Client, Hotel, HotelRoom
+from .models import Client, Hotel, HotelRoom, Booking
 # from django_tables2 import SingleTableView
 from .tables import ClientTable
 from django_tables2.export.export import TableExport
@@ -22,6 +22,7 @@ def index(request):
         'table': table,
         'export_formats': ['xls', 'json', 'xlsx', 'yaml']
         }
+    Booking.objects.all().delete()
     return render(request, 'main/index.html', data)
 
 def root(request):
