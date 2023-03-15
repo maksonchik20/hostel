@@ -1,0 +1,21 @@
+{% extends 'main/index.html' %}
+
+{% block content %}
+    <div class="hotels-list">
+        <label for="start-date">Начальная дата:</label>
+
+        <input type="date" id="start-date" name="trip-start"/>
+
+        <label for="end-date">Конечная дата:</label>
+
+        <input type="date" id="end-date" name="trip-start"/>
+        <button onclick="form()">Сформировать отчёт</button>
+    </div>
+    <script>
+        function form() {
+            let s = document.getElementById('start-date').value;
+            let e = document.getElementById('start-date').value;
+            
+        }
+    </script>
+{% endblock %}

@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.core.exceptions import ValidationError
 
 
 
@@ -14,6 +15,27 @@ from django.contrib.auth.models import AbstractUser
     # class Meta:
     #     verbose_name = 'Пользователь'
     #     verbose_name_plural = 'Пользователи'
+
+class Region(models.Model):
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return f'Название: {self.name}'
+    
+    class Meta:
+        verbose_name = 'Регион'
+        verbose_name_plural = 'Регионы'
+
+class Hotel(models.Model):
+    name = models.CharField(max_length=150)
+    region = models.ForeignKey(Region, on_delete=models.PROTECT)
+
+    def __str__(self):
+        return f'Отель: {self.name}. Местонахождение: {self.region.name}'
+    
+    class Meta:
+        verbose_name = 'Отель'
+        verbose_name_plural = 'Отели'
 
 class Client(models.Model):
     SEX = (
@@ -47,36 +69,53 @@ class Client(models.Model):
 
 
 
-class CategoryRoom(models.Model):
-    name = models.CharField(max_length=255, verbose_name='Название')
-
-    def __str__(self):
-        return self.name
+# class CategoryRoom(models.Model):
+#     name = models.CharField(max_length=150, verbose_name='Название')
     
-    class Meta:
-        verbose_name = 'Категория номера'
-        verbose_name_plural = 'Категории номеров'
+#     def __str__(self):
+#         return self.name
+    
+#     class Meta:
+#         verbose_name = 'Категория номера'
+#         verbose_name_plural = 'Категории номеров'
 
 class HotelRoom(models.Model):
     STATUS = (
         ('Занят', 'Занят'),
-        ('Свободный грязный', 'Свободный грязный'),
-        ('Свободный чистый', 'Свободный чистый')
+        ('Занят (грязный)', 'Занят (грязный)'),
+        ('Свободный (грязный)', 'Свободный (грязный)'),
+        ('Свободный (чистый)', 'Свободный (чистый)')
     )
-
-    name = models.CharField(max_length=255, verbose_name="Название")
-    cat = models.ForeignKey(CategoryRoom, on_delete=models.PROTECT, verbose_name="Категория")
-    price = models.PositiveIntegerField(null=True, blank=True, verbose_name="Цена")
+    CAT = (
+        ('Стандарт', 'Стандарт'),
+        ('Люкс', 'Люкс'),
+        ('Апартамент', 'Апартамент')
+    )
+    hotel = models.ForeignKey(Hotel, on_delete=models.PROTECT, verbose_name='Отель')
+    name = models.CharField(max_length=10, verbose_name="Номер")
+    cat = models.CharField(choices=CAT, verbose_name="Категория", max_length=255)
     status = models.CharField(choices=STATUS, max_length=255, verbose_name="Статус")
 
+
     def __str__(self):
-        return f"Номер: {self.name} Категория: {self.cat.name} Статус: {self.status}"
+        return f"Номер: {self.name} Категория: {self.cat} Статус: {self.status}"
 
     class Meta:
         verbose_name = 'Номер'
         verbose_name_plural = 'Номера'
     
 
+class RoomOccupancy(models.Model):
+    room = models.ForeignKey(HotelRoom, on_delete=models.PROTECT, verbose_name='Номер')
+    date_check_in = models.DateField(verbose_name="Дата заезда")
+    date_of_departure = models.DateField(verbose_name='Даты выезда')
+
+    def __str__(self):
+        return f"Номер: {self.room.name} Даты: {self.date_check_in} - {self.date_of_departure}"
+
+    class Meta:
+        verbose_name = 'Занятость номера'
+        verbose_name_plural = 'Занятости номеров'
 
 class Booking(models.Model):
     client = models.ForeignKey(Client, on_delete=models.PROTECT, verbose_name="Клиент")
@@ -107,6 +146,18 @@ def update_stock(sender, instance, **kwargs):
     post_save.disconnect(update_stock, sender=Booking)
     instance.save()
     post_save.connect(update_stock, sender=Booking)
+
+
+@receiver(post_save, sender=RoomOccupancy)
+def update_stock(sender, instance, **kwargs):
+    if instance.date_check_in < instance.date_of_departure:
+        print('good')
+    else:
+        print('error')
+        raise ValidationError('Дата заезда позже даты выезда')
+    post_save.disconnect(update_stock, sender=RoomOccupancy)
+    instance.save()
+    post_save.connect(update_stock, sender=RoomOccupancy)
 
 
 

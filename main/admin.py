@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import CategoryRoom, HotelRoom, Client, Booking
+from .models import HotelRoom, Client, Booking, RoomOccupancy, Hotel, Region
 from django.contrib.auth.admin import UserAdmin
 from django.utils.html import format_html
 
@@ -59,10 +59,12 @@ class BookingAdmin(admin.ModelAdmin):
     pass
     
 
-admin.site.register(Client, CustomClient)
-admin.site.register(CategoryRoom)
+# admin.site.register(Client, CustomClient)
 admin.site.register(HotelRoom)
-admin.site.register(Booking, BookingAdmin)
+# admin.site.register(Booking, BookingAdmin)
+admin.site.register(RoomOccupancy)
+admin.site.register(Hotel)
+admin.site.register(Region)
 
 
 

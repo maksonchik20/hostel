@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from .models import Client
+from .models import Client, Hotel, HotelRoom
 # from django_tables2 import SingleTableView
 from .tables import ClientTable
 from django_tables2.export.export import TableExport
@@ -26,3 +26,15 @@ def index(request):
 
 def root(request):
     return render(request, 'main/root.html')
+
+def info(request):
+    hotels = Hotel.objects.all()
+    rooms = HotelRoom.objects.all()
+
+    data = {
+        'header_text': "Отчет",
+        'hotels': hotels,
+        }
+    print(data['hotels'])
+    return render(request, 'main/info.html', data)
+
