@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from .models import Client, Hotel, HotelRoom, Booking
-# from django_tables2 import SingleTableView
+from django.views.generic import ListView
 from .tables import ClientTable
 from django_tables2.export.export import TableExport
 from django_tables2.config import RequestConfig
@@ -47,3 +47,8 @@ def bron(request):
         }
 
     return render(request, 'main/bron.html', data)
+
+
+class BookingListView(ListView):
+    model = Booking
+    template_name = "django_tables2/bootstrap.html"

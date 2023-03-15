@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'main',
+    "phonenumber_field",
     
     'crispy_forms',
     'captcha',

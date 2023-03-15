@@ -7,5 +7,5 @@ urlpatterns = [
     # path('info/', include("info.urls")),
     path('', root),
     path('info/', info),
-    path('bron/', bron)
+    path('bron/', BookingListView.as_view())
 ]

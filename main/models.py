@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
-
+from phonenumber_field.modelfields import PhoneNumberField
 
 
 
@@ -43,7 +43,7 @@ class Client(models.Model):
         ('Свидетельство о рождении', 'Свидетельство о рождении')
     )
     fio = models.CharField(max_length=150, verbose_name='ФИО',blank=True, null=True)
-    phone = models.CharField(max_length=255, null=True, blank=True, verbose_name='Телефон +7(9xx) xxx-xx-xx')
+    phone = PhoneNumberField(null=True, blank=True, verbose_name='Телефон +7(9xx) xxx-xx-xx')
     date_birthday = models.DateField(null=True, blank=True, verbose_name='Дата рождения')
     email = models.EmailField(verbose_name='Почта', blank=True)
     type_doc = models.CharField(choices=TYPES_DOCUMENT, max_length=255, verbose_name='Тип документа')
