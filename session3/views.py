@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from .forms import ManageInForm, ManageInHotelForm
+from .models import CheckIn
 from django.http import HttpResponseRedirect
+import datetime
 
 def root(request):
     return render(request, "session3/managing.html")
@@ -15,6 +17,18 @@ def manage_in_room(request):
             # process the data in form.cleaned_data as required
             # ...
             # redirect to a new URL:
+
+            clients = form.cleaned_data["people"]
+            room = form.cleaned_data["room"]
+
+            print(clients, room)
+
+            CheckIn.objects.create(
+                date_in=datetime.datetime.now(),
+                room = room,
+                peoples=[clients]
+            )
+            
             return HttpResponseRedirect('/managing')
 
     # if a GET (or any other method) we'll create a blank form
