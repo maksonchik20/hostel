@@ -1,0 +1,16 @@
+{% extends 'main/index.html' %}
+
+{% block content %}
+<ul>
+    
+    {% for hotel in hotels %}
+        <h2>{{hotel}}</h2> 
+        {% for data in info %}
+            <li>
+                Дата: {{data.date.day}}.{{data.date.month}}.{{data.date.year}}
+                Продажи: {{data.sums}}
+            </li>
+        {% endfor %}
+    {% endfor %}
+</ul>
+{% endblock %}

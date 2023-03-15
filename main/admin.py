@@ -48,6 +48,8 @@ class BookingAdmin(admin.ModelAdmin):
     pass
 class HotelRoomAdmin(admin.ModelAdmin):
     readonly_fields = ('users', )
+class PaysAdmin(admin.ModelAdmin):
+    readonly_fields = ('created_at', )
     
 
 admin.site.register(Client, CustomClient)
@@ -56,7 +58,7 @@ admin.site.register(Booking, BookingAdmin)
 admin.site.register(RoomOccupancy)
 admin.site.register(Hotel)
 admin.site.register(Region)
-admin.site.register(Pays)
+admin.site.register(Pays, PaysAdmin)
 admin.site.register(Quests)
 
 
