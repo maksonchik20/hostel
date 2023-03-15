@@ -28,13 +28,11 @@ def root(request):
     return render(request, 'main/root.html')
 
 def info(request):
-    hotels = Hotel.objects.all()
     rooms = HotelRoom.objects.all()
 
     data = {
         'header_text': "Отчет",
-        'hotels': hotels,
+        'hotels': rooms,
         }
     print(data['hotels'])
     return render(request, 'main/info.html', data)
-
