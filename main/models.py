@@ -164,6 +164,7 @@ def update_stock(sender, instance, **kwargs):
     instance.save()
     post_save.connect(update_stock, sender=Booking)
 
+
 # @receiver(pre_save, sender=Booking)
 # def for_book(sender, instance, **kwargs):
 #     print(instance, kwargs)
