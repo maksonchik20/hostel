@@ -34,5 +34,15 @@ def info(request):
         'header_text': "Отчет",
         'hotels': rooms,
         }
-    print(data['hotels'])
+
     return render(request, 'main/info.html', data)
+
+def bron(request):
+    rooms = HotelRoom.objects.all()
+
+    data = {
+        'header_text': "Журнал бронирования",
+        'hotels': rooms,
+        }
+
+    return render(request, 'main/bron.html', data)

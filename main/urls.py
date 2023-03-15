@@ -6,5 +6,6 @@ urlpatterns = [
     path('index/', index),
     # path('info/', include("info.urls")),
     path('', root),
-    path('info/', info)
+    path('info/', info),
+    path('bron/', bron)
 ]

@@ -1,0 +1,10 @@
+{% extends 'main/index.html' %}
+
+{% block content %}
+  {% for hotel in hotels %}
+  <div>
+    <h1>{{hotel}}</h1>
+    <h4>статус: {{hotel.status}}</h4>
+  </div>
+{% endfor %}
+{% endblock %}
