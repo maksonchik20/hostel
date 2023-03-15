@@ -1,9 +1,9 @@
 {% extends 'main/index.html' %}
 
 {% block content %}
-    <form action="{% url 'manage_out_room' id %}" role="form" method="post">
+    <form action="{% url 'manage_out_hotel' %}" role="form" method="post">
         {% csrf_token %}
-        {{ form }}
+        {{ form.hotel }}
         <button class="btn btn-success" type="submit">
             Оформить
         </button>

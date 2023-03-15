@@ -6,15 +6,19 @@ class ManageHotelForm(forms.Form):
     hotel = forms.ModelChoiceField(queryset=Hotel.objects.all())
 
 class ManageInForm(forms.Form):
-    people = forms.ModelChoiceField(queryset=Client.objects.all())
-    room = forms.ModelChoiceField(queryset=Booking.objects.filter(date_check_in=datetime.datetime.now()))
-
-class ManageOutForm(forms.Form):
-    room = forms.ChoiceField(choices=())
+    room = forms.ModelChoiceField(queryset=None)
 
     def __init__(self, *args, **kwargs):
-        choices = kwargs.pop('choices', None)
-        print(choices)
+        queryset = kwargs.pop('queryset', None)
+        super(ManageInForm, self).__init__(*args, **kwargs)
+        if queryset is not None:
+            self.fields['room'].queryset = queryset
+
+class ManageOutForm(forms.Form):
+    room = forms.ModelChoiceField(queryset=None)
+
+    def __init__(self, *args, **kwargs):
+        queryset = kwargs.pop('queryset', None)
         super(ManageOutForm, self).__init__(*args, **kwargs)
-        if choices is not None:
-            self.fields['room'].choices = choices
+        if queryset is not None:
+            self.fields['room'].queryset = queryset

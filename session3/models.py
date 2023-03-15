@@ -56,7 +56,10 @@ def update_check_in(sender, instance, **kwargs):
     for people in instance.peoples.all():
         users += people.fio + f" с {instance.date_in} по {instance.date_out}" + '\n'
     room = HotelRoom.objects.filter(pk=instance.room.pk)
-    room.update(status="Занят", users=room[0].users + users)
+    if room[0].users:
+        room.update(status="Занят", users=room[0].users + users)
+    else:
+        room.update(status="Занят", users=room[0].users)
     post_save.disconnect(update_check_in, sender=CheckIn)
     instance.save()
     post_save.connect(update_check_in, sender=CheckIn)
