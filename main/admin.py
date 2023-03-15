@@ -46,10 +46,12 @@ class CustomClient(admin.ModelAdmin):
 class BookingAdmin(admin.ModelAdmin):
     # readonly_fields = ('nights', )
     pass
+class HotelRoomAdmin(admin.ModelAdmin):
+    readonly_fields = ('users', )
     
 
 admin.site.register(Client, CustomClient)
-admin.site.register(HotelRoom)
+admin.site.register(HotelRoom, HotelRoomAdmin)
 admin.site.register(Booking, BookingAdmin)
 admin.site.register(RoomOccupancy)
 admin.site.register(Hotel)

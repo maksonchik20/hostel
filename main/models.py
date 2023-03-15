@@ -91,6 +91,7 @@ class HotelRoom(models.Model):
     count_place = models.PositiveIntegerField(verbose_name='Количество мест', blank=True, null=True)
     cat = models.CharField(choices=CAT, verbose_name="Категория", max_length=255)
     status = models.CharField(choices=STATUS, max_length=255, verbose_name="Статус")
+    users = models.TextField(verbose_name='Проживают', null=True, blank=True, editable=False)
 
 
     def __str__(self):
