@@ -143,7 +143,7 @@ class Booking(models.Model):
     client = models.ForeignKey(Quests, on_delete=models.PROTECT, verbose_name="плательщик", null=True, blank=True)
     date_check_in = models.DateField(verbose_name='Дата заезда')
     date_of_departure = models.DateField(verbose_name="Дата выезда")
-    hotel_room = models.ForeignKey(HotelRoom, on_delete=models.PROTECT, verbose_name="Комната", limit_choices_to={'status': 'Свободный (чистый)'},)
+    hotel_room = models.ForeignKey(HotelRoom, on_delete=models.PROTECT, verbose_name="Комната")
     nights = models.PositiveIntegerField(help_text="Вы можете заполнить поле самостоятельно или оно заполнится само после сохранения на основе данных заезда и выезда", verbose_name="Ночей", null=True, blank=True)
     pay = models.PositiveIntegerField(verbose_name="Стоимость", null=True, blank=True)
     flag = models.BooleanField(verbose_name="Бронь подтверждена", default=False)
