@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from .models import Client, Hotel, HotelRoom
+from .models import Client, Hotel, HotelRoom, Booking
 # from django_tables2 import SingleTableView
 from .tables import ClientTable
 from django_tables2.export.export import TableExport
@@ -32,17 +32,17 @@ def info(request):
 
     data = {
         'header_text': "Отчет",
-        'hotels': rooms,
+        'rooms': rooms,
         }
 
     return render(request, 'main/info.html', data)
 
 def bron(request):
-    rooms = HotelRoom.objects.all()
+    occ = Booking.objects.all()
 
     data = {
         'header_text': "Журнал бронирования",
-        'hotels': rooms,
+        'occ': occ,
         }
 
     return render(request, 'main/bron.html', data)

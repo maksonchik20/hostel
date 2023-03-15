@@ -37,3 +37,11 @@ html, body, .index-page-container {
 .index-page-content a {
     font-size: large;
 }
+
+.lilpad {
+    margin-left: 1rem;
+}
+
+.morpad {
+    margin-left: 4rem;
+}

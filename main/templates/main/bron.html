@@ -1,10 +1,14 @@
 {% extends 'main/index.html' %}
 
 {% block content %}
-  {% for hotel in hotels %}
+  {% for o in occ %}
   <div>
-    <h1>{{hotel}}</h1>
-    <h4>статус: {{hotel.status}}</h4>
+    <h1 class="morpad">Заказчик: {{o.client}}</h1>
+    <h3 class="lilpad">Отель: {{o.hotel}}</h3>
+    <h3 class="lilpad">Номер: {{o.hotel_room.name}}</h3>
+    <h3 class="morpad">Дата заезда: {{o.date_check_in}}</h3>
+    <h3 class="morpad">Дата выезда: {{o.date_of_departure}}</h3>
+    <h3 class="morpad">Стоимость: {{o.pays}}</h3>
   </div>
 {% endfor %}
 {% endblock %}
