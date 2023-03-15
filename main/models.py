@@ -88,10 +88,13 @@ class Booking(models.Model):
     big_people = models.PositiveIntegerField(verbose_name="Взрослых")
     small_people = models.PositiveIntegerField(verbose_name="Детей")
     nights = models.PositiveIntegerField(help_text="Вы можете заполнить поле самостоятельно или оно заполнится само после сохранения на основе данных заезда и выезда", verbose_name="Ночей", null=True, blank=True)
-
-
+    
     def __str__(self):
         return f"{self.date_check_in} - {self.date_of_departure} | Номер: {self.hotel_room.name}"
+    
+    class Meta:
+        verbose_name = 'Бронирование'
+        verbose_name_plural = 'Бронирования'
     
 
 
