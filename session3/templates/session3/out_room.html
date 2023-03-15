@@ -1,0 +1,11 @@
+{% extends 'main/index.html' %}
+
+{% block content %}
+    <form action="{% url 'manage_out_room' %}" role="form" method="post">
+        {% csrf_token %}
+        {{ form.room }}
+        <button class="btn btn-success" type="submit">
+            Оформить
+        </button>
+    </form>
+{% endblock %}

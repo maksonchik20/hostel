@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .forms import ManageInForm, ManageInHotelForm
+from .forms import ManageInForm, ManageInHotelForm, ManageOutForm
 from .models import CheckIn
 from django.http import HttpResponseRedirect
 import datetime
@@ -12,6 +12,7 @@ def manage_in_room(request):
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
         form = ManageInForm(request.POST)
+
         # check whether it's valid:
         if form.is_valid():
             # process the data in form.cleaned_data as required
@@ -23,11 +24,6 @@ def manage_in_room(request):
 
             print(clients, room)
 
-            CheckIn.objects.create(
-                date_in=datetime.datetime.now(),
-                room = room,
-                peoples=[clients]
-            )
             
             return HttpResponseRedirect('/managing')
 
@@ -36,6 +32,30 @@ def manage_in_room(request):
         form = ManageInForm()
 
     return render(request, 'session3/in_room.html', {'form': form, 'header_text': "Оформление заезда"})
+
+def manage_out_room(request):
+    # if this is a POST request we need to process the form data
+    if request.method == 'POST':
+        # create a form instance and populate it with data from the request:
+        form = ManageOutForm(request.POST)
+
+        # check whether it's valid:
+        if form.is_valid():
+            # process the data in form.cleaned_data as required
+            # ...
+            # redirect to a new URL:
+
+            room = form.cleaned_data["room"]
+
+            print(room)
+            
+            return HttpResponseRedirect('/managing')
+
+    # if a GET (or any other method) we'll create a blank form
+    else:
+        form = ManageOutForm()
+
+    return render(request, 'session3/out_room.html', {'form': form, 'header_text': "Оформление выезда"})
 
 
 def manage_in(request, id):
