@@ -42,6 +42,7 @@ INSTALLED_APPS = [
 
     'main',
     'session3',
+    "phonenumber_field",
     
     'crispy_forms',
     'captcha',

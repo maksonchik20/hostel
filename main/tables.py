@@ -12,3 +12,9 @@ class HotelTable(tables.Table):
         model = Client
         template_name = "django_tables2/bootstrap4-responsive.html"
         # fields = ("first_name", "last_name")
+
+class BookingTable(tables.Table):
+    class Meta:
+        model = Client
+        template_name = "django_tables2/bootstrap4-responsive.html"
+        # fields = ("first_name", "last_name")
