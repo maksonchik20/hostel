@@ -170,3 +170,5 @@ def update_stock(sender, instance, **kwargs):
 #     instance.save()
 #     post_save.connect(update_stock, sender=RoomOccupancy)
 
+
+
