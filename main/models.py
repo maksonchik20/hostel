@@ -133,11 +133,11 @@ class Pays(models.Model):
         verbose_name_plural = 'Оплаты'
 
 class Booking(models.Model):
-    @staticmethod
-    def check_room_is_free(value):
-        room = HotelRoom.objects.get(pk=value.id)
-        print(room.status)
-        return room.status in [('Свободный (грязный)', 'Свободный (грязный)'), ('Свободный (чистый)', 'Свободный (чистый)')]
+    # @staticmethod
+    # def check_room_is_free(value):
+    #     room = HotelRoom.objects.get(pk=value.id)
+    #     print(room.status)
+    #     return room.status in [('Свободный (грязный)', 'Свободный (грязный)'), ('Свободный (чистый)', 'Свободный (чистый)')]
 
     hotel = models.ForeignKey(Hotel, on_delete=models.PROTECT, verbose_name='Отель', null=True, blank=True)
     client = models.ForeignKey(Quests, on_delete=models.PROTECT, verbose_name="плательщик", null=True, blank=True)
@@ -148,11 +148,11 @@ class Booking(models.Model):
     pay = models.PositiveIntegerField(verbose_name="Стоимость", null=True, blank=True)
     flag = models.BooleanField(verbose_name="Бронь подтверждена", default=False)
 
-    def clean(self):
-        self.is_cleaned = True
-        if not self.check_room_is_free(self.hotel_room):
-            raise ValidationError("Комната не свободна!")
-        super(RoomOccupancy, self).clean()
+    # def clean(self):
+    #     self.is_cleaned = True
+    #     if not self.check_room_is_free(self.hotel_room):
+    #         raise ValidationError("Комната не свободна!")
+    #     super(RoomOccupancy, self).clean()
 
     def __str__(self):
         return f"{self.date_check_in} - {self.date_of_departure} | Номер: {self.hotel_room.name}"

@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'main',
+    'session3',
     
     'crispy_forms',
     'captcha',
