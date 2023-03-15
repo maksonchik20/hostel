@@ -29,6 +29,7 @@ DEBUG = True
 ALLOWED_HOSTS = ['*'] # 'hostelBusiness.pythonanywhere.com'
 
 
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -40,6 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'main',
+    'session3',
+    "phonenumber_field",
     
     'crispy_forms',
     'captcha',

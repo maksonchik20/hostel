@@ -1,11 +1,46 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from .models import Client
-# from django_tables2 import SingleTableView
+from .models import Client, Hotel, HotelRoom, Booking, Region
+from django.views.generic import ListView
 from .tables import ClientTable
 from django_tables2.export.export import TableExport
 from django_tables2.config import RequestConfig
+import random
+import json
 
+
+def create_data():
+    ...
+
+    # regs = set()
+    # with open('russia', 'r', encoding='utf-8') as f:
+    #     r = json.loads(f.read())
+    #     for el in r:
+    #         if el['region'] not in regs:
+    #             regs.add(el['region'])
+    #             Region.objects.create(name=el['region'])
+    STATUS = (
+        ('Занят', 'Занят'),
+        ('Занят (грязный)', 'Занят (грязный)'),
+        ('Свободный (грязный)', 'Свободный (грязный)'),
+        ('Свободный (чистый)', 'Свободный (чистый)')
+    )
+    CAT = (
+        ('Стандарт', 'Стандарт'),
+        ('Люкс', 'Люкс'),
+        ('Апартамент', 'Апартамент')
+    )
+    for hotel in Hotel.objects.all():
+        for i in range(1, 7):
+            HotelRoom.objects.create(hotel=hotel, name=i, count_place=2, cat=CAT[0][0], status=random.choice(STATUS)[0])
+    for hotel in Hotel.objects.all():
+        for i in range(7, 10):
+            HotelRoom.objects.create(hotel=hotel, name=i, count_place=2, cat=CAT[1][0], status=random.choice(STATUS[0]))
+    for hotel in Hotel.objects.all():
+        for i in range(10, 12):
+            HotelRoom.objects.create(hotel=hotel, name=i, count_place=2, cat=CAT[2][0], status=random.choice(STATUS[0]))
+    
+    
 def index(request):
     # здесь можно получить данные из бд и передать их также в data
     table = ClientTable(Client.objects.all())
@@ -22,7 +57,31 @@ def index(request):
         'table': table,
         'export_formats': ['xls', 'json', 'xlsx', 'yaml']
         }
+    create_data()
+    print('good create')
+    # Booking.objects.all().delete()
     return render(request, 'main/index.html', data)
 
-def some_page(request):
-    return HttpResponse('hello')
+def root(request):
+    return render(request, 'main/root.html')
+
+def info(request):
+    rooms = HotelRoom.objects.all()
+
+    data = {
+        'header_text': "Отчет",
+        'rooms': rooms,
+        }
+
+    return render(request, 'main/info.html', data)
+
+def bron(request):
+    occ = Booking.objects.all()
+
+    data = {
+        'header_text': "Журнал бронирования",
+        'occ': occ,
+        }
+
+    return render(request, 'main/bron.html', data)
+
