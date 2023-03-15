@@ -3,12 +3,13 @@
 {% block content %}
   {% for o in occ %}
   <div>
-    <h1 class="morpad">Заказчик: {{o.client}}</h1>
-    <h3 class="lilpad">Отель: {{o.hotel}}</h3>
-    <h3 class="lilpad">Номер: {{o.hotel_room.name}}</h3>
+    <h1 class="lilpad">Заказчик: {{o.client}}</h1>
+    <h3 class="morpad">Отель: {{o.hotel}}</h3>
+    <h3 class="morpad">Номер: {{o.hotel_room.name}}</h3>
     <h3 class="morpad">Дата заезда: {{o.date_check_in}}</h3>
     <h3 class="morpad">Дата выезда: {{o.date_of_departure}}</h3>
-    <h3 class="morpad">Стоимость: {{o.pays}}</h3>
+    <h3 class="morpad">Стоимость: {{o.pay}}</h3>
+    <h3 class="morpad">Бронь подтверждена: {% if o.flag %}Да{% else %}Нет{% endif %}</h3>
   </div>
 {% endfor %}
 {% endblock %}

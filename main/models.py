@@ -102,7 +102,7 @@ class HotelRoom(models.Model):
     
 
 class RoomOccupancy(models.Model):
-    room = models.ForeignKey(HotelRoom, on_delete=models.PROTECT, verbose_name='Номер')
+    room = models.ForeignKey(HotelRoom, on_delete=models.PROTECT, verbose_name='Номер', validators=[])
     date_check_in = models.DateField(verbose_name="Дата заезда")
     date_of_departure = models.DateField(verbose_name='Даты выезда')
     def __str__(self):
@@ -133,6 +133,12 @@ class Pays(models.Model):
         verbose_name_plural = 'Оплаты'
 
 class Booking(models.Model):
+    @staticmethod
+    def check_room_is_free(value):
+        room = HotelRoom.objects.get(pk=value.id)
+        print(room.status)
+        return room.status in [('Свободный (грязный)', 'Свободный (грязный)'), ('Свободный (чистый)', 'Свободный (чистый)')]
+
     hotel = models.ForeignKey(Hotel, on_delete=models.PROTECT, verbose_name='Отель', null=True, blank=True)
     client = models.ForeignKey(Quests, on_delete=models.PROTECT, verbose_name="плательщик", null=True, blank=True)
     date_check_in = models.DateField(verbose_name='Дата заезда')
@@ -141,6 +147,12 @@ class Booking(models.Model):
     nights = models.PositiveIntegerField(help_text="Вы можете заполнить поле самостоятельно или оно заполнится само после сохранения на основе данных заезда и выезда", verbose_name="Ночей", null=True, blank=True)
     pay = models.PositiveIntegerField(verbose_name="Стоимость", null=True, blank=True)
     flag = models.BooleanField(verbose_name="Бронь подтверждена", default=False)
+
+    def clean(self):
+        self.is_cleaned = True
+        if not self.check_room_is_free(self.hotel_room):
+            raise ValidationError("Комната не свободна!")
+        super(RoomOccupancy, self).clean()
 
     def __str__(self):
         return f"{self.date_check_in} - {self.date_of_departure} | Номер: {self.hotel_room.name}"
