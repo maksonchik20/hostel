@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import HotelRoom, Client, Booking, RoomOccupancy, Hotel, Region, Pays
+from .models import HotelRoom, Client, Booking, RoomOccupancy, Hotel, Region, Pays, Quests
 from django.contrib.auth.admin import UserAdmin
 from django.utils.html import format_html
 
@@ -55,6 +55,7 @@ admin.site.register(RoomOccupancy)
 admin.site.register(Hotel)
 admin.site.register(Region)
 admin.site.register(Pays)
+admin.site.register(Quests)
 
 
 

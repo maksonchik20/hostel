@@ -56,8 +56,8 @@ class Client(models.Model):
         return f'{self.fio}'
     
     class Meta:
-        verbose_name = 'Клиент'
-        verbose_name_plural = 'Клиенты'
+        verbose_name = 'Гости'
+        verbose_name_plural = 'Гости'
 
 
 class Quests(models.Model):
@@ -65,16 +65,14 @@ class Quests(models.Model):
         ('физ.лицо', 'физ.лицо'),
         ('юр.лицо', 'юр.лицо')
     )
+    payer = models.CharField(max_length=150, verbose_name='Плательщик', null=True, blank=True)
+    vid = models.CharField(max_length=255, choices=PAYERS, verbose_name='Вид')
 
-# class CategoryRoom(models.Model):
-#     name = models.CharField(max_length=150, verbose_name='Название')
-    
-#     def __str__(self):
-#         return self.name
-    
-#     class Meta:
-#         verbose_name = 'Категория номера'
-#         verbose_name_plural = 'Категории номеров'
+    def __str__(self):
+        return f"{self.payer}  -  {self.vid}"
+    class Meta:
+        verbose_name = 'Клиент (плательщик)'
+        verbose_name_plural = 'Клиенты (плательщики)'
 
 class HotelRoom(models.Model):
     STATUS = (
@@ -123,25 +121,29 @@ class RoomOccupancy(models.Model):
         super(RoomOccupancy, self).save(*args, **kwargs)
 
 class Pays(models.Model):
-    booking = models.ForeignKey("Booking", on_delete=models.PROTECT)
+    booking = models.ForeignKey("Booking", on_delete=models.PROTECT, verbose_name="Основание")
     sums = models.PositiveIntegerField(verbose_name="Сумма оплаты")
-    prepayment = models.PositiveIntegerField(verbose_name="Предоплата")
+    prepayment = models.PositiveIntegerField(verbose_name="Оплачено по факту")
+
+    def __str__(self):
+        return f"{self.booking.client.payer}. Нужная сумма:{self.sums} Оплачено: {self.prepayment}"
+
+    class Meta:
+        verbose_name = 'Оплата'
+        verbose_name_plural = 'Оплаты'
 
 class Booking(models.Model):
     hotel = models.ForeignKey(Hotel, on_delete=models.PROTECT, verbose_name='Отель', null=True, blank=True)
-    client = models.ForeignKey(Client, on_delete=models.PROTECT, verbose_name="Клиент")
+    client = models.ForeignKey(Quests, on_delete=models.PROTECT, verbose_name="плательщик", null=True, blank=True)
     date_check_in = models.DateField(verbose_name='Дата заезда')
     date_of_departure = models.DateField(verbose_name="Дата выезда")
-    hotel_room = models.ForeignKey(HotelRoom, on_delete=models.PROTECT, verbose_name="Комната")
+    hotel_room = models.ForeignKey(HotelRoom, on_delete=models.PROTECT, verbose_name="Комната", limit_choices_to={'status': 'Свободный (чистый)'},)
     nights = models.PositiveIntegerField(help_text="Вы можете заполнить поле самостоятельно или оно заполнится само после сохранения на основе данных заезда и выезда", verbose_name="Ночей", null=True, blank=True)
     pay = models.PositiveIntegerField(verbose_name="Стоимость", null=True, blank=True)
     flag = models.BooleanField(verbose_name="Бронь подтверждена", default=False)
 
     def __str__(self):
         return f"{self.date_check_in} - {self.date_of_departure} | Номер: {self.hotel_room.name}"
-    # def save(self, *args, **kwargs):
-    #     print(args, kwargs)
-    #     super(Booking, self).save(*args, **kwargs)  
     class Meta:
         verbose_name = 'Бронирование'
         verbose_name_plural = 'Бронирования'
@@ -151,13 +153,11 @@ class Booking(models.Model):
 
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
-from datetime import datetime, timedelta
 
 @receiver(post_save, sender=Booking)
 def update_stock(sender, instance, **kwargs):
     instance.nights = (instance.date_of_departure - instance.date_check_in).days
     booking = Booking.objects.get(pk=instance.pk)
-    print(booking)
     if kwargs['created']:
         Pays.objects.create(booking=booking, sums=instance.pay, prepayment=0)
     post_save.disconnect(update_stock, sender=Booking)
@@ -165,24 +165,12 @@ def update_stock(sender, instance, **kwargs):
     post_save.connect(update_stock, sender=Booking)
 
 
-# @receiver(pre_save, sender=Booking)
-# def for_book(sender, instance, **kwargs):
-#     print(instance, kwargs)
-#     post_save.disconnect(for_book, sender=Booking)
-#     instance.save()
-#     post_save.connect(for_book, sender=Booking)
-
-
-# @receiver(post_save, sender=RoomOccupancy)
-# def update_stock(sender, instance, **kwargs):
-#     if instance.date_check_in < instance.date_of_departure:
-#         print('good')
-#     else:
-#         print('error')
-#         raise ValidationError('Дата заезда позже даты выезда')
-#     post_save.disconnect(update_stock, sender=RoomOccupancy)
-#     instance.save()
-#     post_save.connect(update_stock, sender=RoomOccupancy)
-
-
+@receiver(post_save, sender=Pays)
+def update_pays(sender, instance, **kwargs):
+    if instance.prepayment >= instance.sums:
+        booking = instance.booking
+        booking = Booking.objects.filter(pk=booking.pk).update(flag=True)
+    post_save.disconnect(update_pays, sender=Pays)
+    instance.save()
+    post_save.connect(update_pays, sender=Pays)
 
