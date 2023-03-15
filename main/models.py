@@ -125,7 +125,7 @@ class Pays(models.Model):
     booking = models.ForeignKey("Booking", on_delete=models.PROTECT, verbose_name="Основание")
     sums = models.PositiveIntegerField(verbose_name="Сумма оплаты")
     prepayment = models.PositiveIntegerField(verbose_name="Оплачено по факту")
-
+    
     def __str__(self):
         return f"{self.booking.client.payer}. Нужная сумма:{self.sums} Оплачено: {self.prepayment}"
 
