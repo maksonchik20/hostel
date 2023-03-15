@@ -7,18 +7,17 @@ from django_tables2.export.export import TableExport
 from django_tables2.config import RequestConfig
 import random
 import json
+from datetime import date, datetime, timedelta
 
 
 def create_data():
-    ...
-
-    # regs = set()
-    # with open('russia', 'r', encoding='utf-8') as f:
-    #     r = json.loads(f.read())
-    #     for el in r:
-    #         if el['region'] not in regs:
-    #             regs.add(el['region'])
-    #             Region.objects.create(name=el['region'])
+    regs = set()
+    with open('russia', 'r', encoding='utf-8') as f:
+        r = json.loads(f.read())
+        for el in r:
+            if el['region'] not in regs:
+                regs.add(el['region'])
+                Region.objects.create(name=el['region'])
     STATUS = (
         ('Занят', 'Занят'),
         ('Занят (грязный)', 'Занят (грязный)'),
@@ -57,8 +56,8 @@ def index(request):
         'table': table,
         'export_formats': ['xls', 'json', 'xlsx', 'yaml']
         }
-    create_data()
-    print('good create')
+    # create_data()
+    # print('good create')
     # Booking.objects.all().delete()
     return render(request, 'main/index.html', data)
 
@@ -84,4 +83,17 @@ def bron(request):
         }
 
     return render(request, 'main/bron.html', data)
+
+def report(request):
+    data = {'info': [], 'hotels': []}
+    date_now = datetime.now()
+    for hotel in Hotel.objects.all():
+        data['hotels'].append(hotel.name) 
+        for i in range(3, 6):
+            a = Booking.objects.filter(hotel=hotel, date_check_in__lte=date_now + timedelta(days=i), date_of_departure__gt=date_now + timedelta(days=i)) # date_check_in__range=(date(2023,3,22), date(2023,3,24))
+            data['info'].append({'date': date_now + timedelta(days=i), 'sums': 0})
+            for el in a:
+                data['info'][-1]['sums'] = el.pay
+    print(data)
+    return render(request, 'main/reports.html', data)
 
