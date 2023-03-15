@@ -32,7 +32,7 @@ def create_data():
     )
     for hotel in Hotel.objects.all():
         for i in range(1, 7):
-            HotelRoom.objects.create(hotel=hotel, name=i, count_place=2, cat=CAT[0][0], status=random.choice(STATUS[0]))
+            HotelRoom.objects.create(hotel=hotel, name=i, count_place=2, cat=CAT[0][0], status=random.choice(STATUS)[0])
     for hotel in Hotel.objects.all():
         for i in range(7, 10):
             HotelRoom.objects.create(hotel=hotel, name=i, count_place=2, cat=CAT[1][0], status=random.choice(STATUS[0]))
@@ -85,7 +85,3 @@ def bron(request):
 
     return render(request, 'main/bron.html', data)
 
-
-class BookingListView(ListView):
-    model = Booking
-    template_name = "django_tables2/bootstrap.html"
