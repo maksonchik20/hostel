@@ -61,7 +61,7 @@ class BookingAdmin(admin.ModelAdmin):
 
 # admin.site.register(Client, CustomClient)
 admin.site.register(HotelRoom)
-# admin.site.register(Booking, BookingAdmin)
+admin.site.register(Booking, BookingAdmin)
 admin.site.register(RoomOccupancy)
 admin.site.register(Hotel)
 admin.site.register(Region)
