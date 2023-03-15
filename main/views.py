@@ -74,7 +74,3 @@ def bron(request):
 
     return render(request, 'main/bron.html', data)
 
-
-class BookingListView(ListView):
-    model = Booking
-    template_name = "django_tables2/bootstrap.html"
