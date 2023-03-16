@@ -178,11 +178,11 @@ class Booking(models.Model):
     #     print(room.status)
     #     return room.status in [('Свободный (грязный)', 'Свободный (грязный)'), ('Свободный (чистый)', 'Свободный (чистый)')]
 
-    hotel = models.ForeignKey(Hotel, on_delete=models.PROTECT, verbose_name='Отель', null=True, blank=True)
+    hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE, verbose_name='Отель', null=True, blank=True)
     client = models.ForeignKey(Quests, on_delete=models.PROTECT, verbose_name="плательщик", null=True, blank=True)
     date_check_in = models.DateField(verbose_name='Дата заезда')
     date_of_departure = models.DateField(verbose_name="Дата выезда")
-    hotel_room = models.ForeignKey(HotelRoom, on_delete=models.PROTECT, verbose_name="Комната")
+    hotel_room = models.ForeignKey(HotelRoom, on_delete=models.CASCADE, verbose_name="Комната")
     nights = models.PositiveIntegerField(help_text="Вы можете заполнить поле самостоятельно или оно заполнится само после сохранения на основе данных заезда и выезда", verbose_name="Ночей", null=True, blank=True)
     pay = models.PositiveIntegerField(verbose_name="Стоимость", null=True, blank=True, help_text="Вы можете заполнить поле самостоятельно или оно заполнится автоматически после сохранения на основе данных стоимости номера. Результат вычислений можно увидеть, сохранив запись и вернувшись обратно или просто нажать 'Сохранить и продолжить редактирование'")
     cnt_people = models.PositiveIntegerField(verbose_name="Количество людей", default=1)
@@ -190,11 +190,16 @@ class Booking(models.Model):
     flag = models.BooleanField(verbose_name="Бронь подтверждена", default=False)
 
     def save(self, *args, **kwargs):
+        new_object = not self.pk
+        if new_object: # new object
+            # print('create')
+            # booking = Booking.objects.get(pk=self.pk)
+            # print(self.result_sum)
+            # Pays.objects.create(booking=booking, sums=self.result_sum, prepayment=0)
+            pay_changed = True
         super(Booking, self).save(*args, **kwargs)
         pay_changed = False
-        if not self.pk: # new object
-            pay_changed = True
-        else:
+        if not new_object:
             orig_obj = Booking.objects.get(pk=self.pk)
             if orig_obj.pay != self.pay:
                 pay_changed = True
@@ -207,7 +212,10 @@ class Booking(models.Model):
                         a = Booking.objects.filter(pk=self.pk).update(pay=price.price, result_sum=result_sum * 0.8)
                     else:
                         a = Booking.objects.filter(pk=self.pk).update(pay=price.price, result_sum=calculate_price_with_sale(self.hotel.direction, result_sum))
-
+        if not new_object:
+            booking = Booking.objects.get(pk=self.pk)
+            if len(Pays.objects.filter(booking=booking)) == 0:
+                Pays.objects.create(booking=booking, sums=booking.result_sum, prepayment=0)
     def __str__(self):
         return f"{self.date_check_in} - {self.date_of_departure} | Номер: {self.hotel_room.name}"
     
@@ -227,11 +235,12 @@ def update_stock(sender, instance, **kwargs):
     # print(kwargs)
     instance.nights = (instance.date_of_departure - instance.date_check_in).days
     booking = Booking.objects.get(pk=instance.pk)
-    if kwargs['created']:
-        Pays.objects.create(booking=booking, sums=instance.pay, prepayment=0)
     post_save.disconnect(update_stock, sender=Booking)
     instance.save()
     post_save.connect(update_stock, sender=Booking)
+    # if kwargs['created']:
+    #     print(instance.result_sum)
+        # Pays.objects.create(booking=booking, sums=instance.result_sum, prepayment=0)
 
 
 @receiver(post_save, sender=Pays)
