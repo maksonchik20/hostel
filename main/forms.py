@@ -1,13 +1,9 @@
-# from django import forms
-# from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-# from .models import User
+from django import forms
+from .models import Hotel
 
-# class CustomUserCreationForm(UserCreationForm):
-#     class Meta:
-#         model = User
-#         fields = ['first_name', 'last_name', 'phone', 'date_birthday']
+class ReportSelectForm(forms.Form):
+    class DateInput(forms.DateInput):
+        input_type = 'date'
 
-# class CustomUserChangeForm(UserChangeForm):
-#     class Meta:
-#         model = User
-#         fields = ['first_name', 'last_name', 'phone', 'date_birthday']
+    hotel = forms.ModelChoiceField(queryset=Hotel.objects.all())
+    date = forms.DateField(widget=DateInput)

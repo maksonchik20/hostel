@@ -1,13 +1,22 @@
 {% extends 'main/index.html' %}
 
 {% block content %}
+<table class="table">
+  <tr>
+    <th scope="col">Номер:</th>
+    <th scope="col">отель:</th>
+    <th scope="col">статус:</th>
+    <th scope="col">категория:</th>
+    <th scope="col">кол-во мест:</th>
+  </tr>
   {% for room in rooms %}
-  <div>
-    <h1 class="lilpad">Номер: {{room.name}}</h1>
-    <h3 class="morpad">отель: {{room.hotel}}</h3>
-    <h3 class="morpad">статус: {{room.status}}</h3>
-    <h3 class="morpad">Категория: {{room.cat}}</h3>
-    <h3 class="morpad">Кол-во мест: {{room.count_place}}</h3>
-  </div>
-{% endfor %}
+  <tr>
+    <th scope="row">{{room.name}}</th>
+    <td >{{room.hotel}}</td>
+    <td >{{room.status}}</td>
+    <td >{{room.cat}}</td>
+    <td >{{room.count_place}}</td>
+  </tr>
+  {% endfor %}
+</table>
 {% endblock %}

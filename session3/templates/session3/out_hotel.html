@@ -1,7 +1,7 @@
 {% extends 'main/index.html' %}
 
 {% block content %}
-    <form action="{% url 'manage_in_hotel' %}" role="form" method="post">
+    <form action="{% url 'manage_out_hotel' %}" role="form" method="post">
         {% csrf_token %}
         <div class="morpad">
             <h1>Отель:</h1>

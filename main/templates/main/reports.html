@@ -1,16 +1,46 @@
 {% extends 'main/index.html' %}
 
+{% load mathfilters %}
+
 {% block content %}
-<ul>
-    
-    {% for hotel in hotels %}
-        <h2>{{hotel}}</h2> 
-        {% for data in info %}
-            <li>
-                Дата: {{data.date.day}}.{{data.date.month}}.{{data.date.year}}
-                Продажи: {{data.sums}}
-            </li>
-        {% endfor %}
-    {% endfor %}
-</ul>
+<div class="morpad">
+    <h1>Анализ эффективности продаж</h1>
+    <table class="table">
+        <tr>
+            <th scope="col">Дата: {{report.date.day}}.{{report.date.month}}.{{report.date.year}}</th>
+            <th scope="col"></th>
+          </tr>
+        <tr>
+          <th scope="col">Отель: {{report.hotel_name}}</th>
+          <th scope="col"></th>
+        </tr>
+        {% if report.show %}
+        <tr>
+            <td scope="row">Количество проданых ночей</td>
+            <td scope="row">{{report.nights}}</td>
+        </tr>
+        <tr>
+            <td scope="row">Общая сумма продаж</td>
+            <td scope="row">{{report.sell_sum}}</td>
+        </tr>
+        <tr>
+            <td scope="row">% загрузки номерного фонда</td>
+            <td scope="row">{{report.load}}%</td>
+        </tr>
+        <tr>
+            <td scope="row">Ср. цена ADR</td>
+            <td scope="row">{{report.adr}}</td>
+        </tr>
+        <tr>
+            <td scope="row">RevPAR</td>
+            <td scope="row">{{report.revpar}}</td>
+        </tr>
+        {% else %}
+        <tr>
+            <td scope="row">На выбранную дату нет продаж</td>
+            <td scope="row"></td>
+        </tr>
+        {% endif %}
+    </table>
+</div>
 {% endblock %}

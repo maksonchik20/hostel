@@ -2,12 +2,25 @@ import datetime
 from django import forms
 from main.models import Booking, Hotel, Client
 
-class ManageInHotelForm(forms.Form):
+class ManageHotelForm(forms.Form):
     hotel = forms.ModelChoiceField(queryset=Hotel.objects.all())
 
 class ManageInForm(forms.Form):
-    people = forms.ModelChoiceField(queryset=Client.objects.all())
-    room = forms.ModelChoiceField(queryset=Booking.objects.filter(date_check_in=datetime.datetime.now()))
+    room = forms.ModelChoiceField(queryset=None)
+    people = forms.ModelMultipleChoiceField(queryset=Client.objects.all())
+
+    def __init__(self, *args, **kwargs):
+        queryset = kwargs.pop('queryset', None)
+        super(ManageInForm, self).__init__(*args, **kwargs)
+        if queryset is not None:
+            self.fields['room'].queryset = queryset
 
 class ManageOutForm(forms.Form):
-    room = forms.ModelChoiceField(queryset=Booking.objects.filter(date_of_departure=datetime.datetime.now()))
+    room = forms.ModelChoiceField(queryset=None)
+    people = forms.ModelMultipleChoiceField(queryset=Client.objects.all())
+
+    def __init__(self, *args, **kwargs):
+        queryset = kwargs.pop('queryset', None)
+        super(ManageOutForm, self).__init__(*args, **kwargs)
+        if queryset is not None:
+            self.fields['room'].queryset = queryset

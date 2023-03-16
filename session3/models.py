@@ -38,14 +38,17 @@ from django.dispatch import receiver
 def update_check_out(sender, instance, **kwargs):
     users = ""
     room = HotelRoom.objects.filter(pk=instance.room.pk)
-    users_in = room[0].users.split('\n')
-    result_users_in = users_in.copy()
-    for people in instance.peoples.all():
-        for user_in in users_in:
-            if people.fio in user_in:
-                result_users_in.remove(user_in)
-    users_in = "\n".join(result_users_in)
-    room.update(status="Свободный (грязный)", users=users_in)
+    if room[0].users:
+        users_in = room[0].users.split('\n')
+        result_users_in = users_in.copy()
+        for people in instance.peoples.all():
+            for user_in in users_in:
+                if people.fio in user_in:
+                    result_users_in.remove(user_in)
+        users_in = "\n".join(result_users_in)
+        room.update(status="Свободный (грязный)", users=users_in)
+    else:
+        room.update(status="Свободный (грязный)", users=None)
     post_save.disconnect(update_check_out, sender=CheckOut)
     instance.save()
     post_save.connect(update_check_out, sender=CheckOut)
@@ -56,7 +59,10 @@ def update_check_in(sender, instance, **kwargs):
     for people in instance.peoples.all():
         users += people.fio + f" с {instance.date_in} по {instance.date_out}" + '\n'
     room = HotelRoom.objects.filter(pk=instance.room.pk)
-    room.update(status="Занят", users=room[0].users + users)
+    if room[0].users:
+        room.update(status="Занят", users=room[0].users + users)
+    else:
+        room.update(status="Занят", users=room[0].users)
     post_save.disconnect(update_check_in, sender=CheckIn)
     instance.save()
     post_save.connect(update_check_in, sender=CheckIn)

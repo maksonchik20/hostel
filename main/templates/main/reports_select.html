@@ -1,18 +1,18 @@
 {% extends 'main/index.html' %}
 
 {% block content %}
-    <form action="{% url 'manage_in_room' id %}" role="form" method="post">
+    <form action="{% url 'report' %}" role="form" method="post">
         {% csrf_token %}
         <div class="morpad">
-            <h1>Номер:</h1>
-            {{ form.room }}
+            <h1>Отель:</h1>
+            {{ form.hotel }}
         </div>
         <div class="morpad">
-            <h1>Прибывшие:</h1>
-            {{ form.people }}
+            <h1>Дата:</h1>
+            {{ form.date }}
         </div>
         <button class="btn btn-success morpad" type="submit">
-            Оформить
+            Сгенерировать отчет
         </button>
     </form>
 {% endblock %}

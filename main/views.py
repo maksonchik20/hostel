@@ -1,6 +1,6 @@
 from django.shortcuts import render
-from django.http import HttpResponse
-from .models import Client, Hotel, HotelRoom, Booking, Region
+from django.http import HttpResponseRedirect
+from .models import Client, Hotel, HotelRoom, Booking, Pays, Region,CostPrice
 from django.views.generic import ListView
 from .tables import ClientTable
 from django_tables2.export.export import TableExport
@@ -8,36 +8,46 @@ from django_tables2.config import RequestConfig
 import random
 import json
 from datetime import date, datetime, timedelta
+from dataclasses import dataclass
+from typing import List
+from .forms import ReportSelectForm
+# from session4.models import CostPrice
+
 
 
 def create_data():
-    regs = set()
-    with open('russia', 'r', encoding='utf-8') as f:
-        r = json.loads(f.read())
-        for el in r:
-            if el['region'] not in regs:
-                regs.add(el['region'])
-                Region.objects.create(name=el['region'])
-    STATUS = (
-        ('Занят', 'Занят'),
-        ('Занят (грязный)', 'Занят (грязный)'),
-        ('Свободный (грязный)', 'Свободный (грязный)'),
-        ('Свободный (чистый)', 'Свободный (чистый)')
-    )
+    ...
+    prices = [2500, 3800, 4000, 4500, 5000]
     CAT = (
         ('Стандарт', 'Стандарт'),
         ('Люкс', 'Люкс'),
         ('Апартамент', 'Апартамент')
     )
     for hotel in Hotel.objects.all():
-        for i in range(1, 7):
-            HotelRoom.objects.create(hotel=hotel, name=i, count_place=2, cat=CAT[0][0], status=random.choice(STATUS)[0])
-    for hotel in Hotel.objects.all():
-        for i in range(7, 10):
-            HotelRoom.objects.create(hotel=hotel, name=i, count_place=2, cat=CAT[1][0], status=random.choice(STATUS[0]))
-    for hotel in Hotel.objects.all():
-        for i in range(10, 12):
-            HotelRoom.objects.create(hotel=hotel, name=i, count_place=2, cat=CAT[2][0], status=random.choice(STATUS[0]))
+        for cat in CAT:
+            CostPrice.objects.create(hotel=hotel, cat=cat[0], price=random.choice(prices))
+    # regs = set()
+    # with open('russia', 'r', encoding='utf-8') as f:
+    #     r = json.loads(f.read())
+    #     for el in r:
+    #         if el['region'] not in regs:
+    #             regs.add(el['region'])
+    #             Region.objects.create(name=el['region'])
+    # STATUS = (
+    #     ('Занят', 'Занят'),
+    #     ('Занят (грязный)', 'Занят (грязный)'),
+    #     ('Свободный (грязный)', 'Свободный (грязный)'),
+    #     ('Свободный (чистый)', 'Свободный (чистый)')
+    # )
+    # for hotel in Hotel.objects.all():
+    #     for i in range(1, 7):
+    #         HotelRoom.objects.create(hotel=hotel, name=i, count_place=2, cat=CAT[0][0], status=random.choice(STATUS)[0])
+    # for hotel in Hotel.objects.all():
+    #     for i in range(7, 10):
+    #         HotelRoom.objects.create(hotel=hotel, name=i, count_place=2, cat=CAT[1][0], status=random.choice(STATUS[0]))
+    # for hotel in Hotel.objects.all():
+    #     for i in range(10, 12):
+    #         HotelRoom.objects.create(hotel=hotel, name=i, count_place=2, cat=CAT[2][0], status=random.choice(STATUS[0]))
     
     
 def index(request):
@@ -96,5 +106,4 @@ def report(request):
                 data['info'][-1]['sums'] = el.pay
     print(data)
     return render(request, 'main/reports.html', data)
-
 
