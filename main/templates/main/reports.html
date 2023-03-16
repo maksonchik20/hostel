@@ -14,6 +14,7 @@
           <th scope="col">Отель: {{report.hotel_name}}</th>
           <th scope="col"></th>
         </tr>
+        {% if report.show %}
         <tr>
             <td scope="row">Количество проданых ночей</td>
             <td scope="row">{{report.nights}}</td>
@@ -24,7 +25,7 @@
         </tr>
         <tr>
             <td scope="row">% загрузки номерного фонда</td>
-            <td scope="row">{{report.load}}</td>
+            <td scope="row">{{report.load}}%</td>
         </tr>
         <tr>
             <td scope="row">Ср. цена ADR</td>
@@ -34,6 +35,12 @@
             <td scope="row">RevPAR</td>
             <td scope="row">{{report.revpar}}</td>
         </tr>
+        {% else %}
+        <tr>
+            <td scope="row">На выбранную дату нет продаж</td>
+            <td scope="row"></td>
+        </tr>
+        {% endif %}
     </table>
 </div>
 {% endblock %}

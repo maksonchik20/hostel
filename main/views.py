@@ -96,17 +96,29 @@ def bron(request):
 
 def report(request, hotel_id, day, month, year):
     date = datetime(year=year, month=month, day=day)
-    nights = 1
-    sell_sum = 1
-    load = 1
-    adr = 1
-    revpar = 1
-    hotel_name = Hotel.objects.get(pk=hotel_id).name
+    hotel = Hotel.objects.get(pk=hotel_id)
+    bookings = Booking.objects.filter(hotel=hotel, date_check_in__lte=date, date_of_departure__gte=date) # date_check_in__range=(date(2023,3,22), date(2023,3,24))
+    nights = 0
+    sell_sum = 0
+    total_rooms = len(HotelRoom.objects.filter(hotel=hotel))
+    for el in bookings:
+        nights += 1
+        sell_sum += el.pay
+    if nights == 0:
+        return render(request, "main/reports.html", {'header_text': "Аналитика",
+                                                  'report': {
+                                                    'show': False
+                                                  }})
+    
+    load = int(nights / total_rooms * 10000) / 100
+    adr = sell_sum / nights
+    revpar = sell_sum / total_rooms
 
     return render(request, "main/reports.html", {'header_text': "Аналитика",
                                                   'report': {
+                                                    'show': True,
                                                     'date': date,
-                                                    'hotel_name': hotel_name,
+                                                    'hotel_name': hotel.name,
                                                     'nights': nights,
                                                     'sell_sum': sell_sum,
                                                     'load': load,
