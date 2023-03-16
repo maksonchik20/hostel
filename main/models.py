@@ -6,7 +6,11 @@ from django.core.exceptions import ValidationError
 # from phonenumber_field.modelfields import PhoneNumberField
 
 
-
+DIRECTION = (
+    ('Популярное', 'Популярное'),
+    ('Среднее по популярности', 'Среднее по популярности'),
+    ('Непопулярное', 'Непопулярное')
+)
 
 class CostPrice(models.Model):
     CAT = (
@@ -49,9 +53,10 @@ class Region(models.Model):
 class Hotel(models.Model):
     name = models.CharField(max_length=150)
     region = models.ForeignKey(Region, on_delete=models.PROTECT)
+    direction = models.CharField(choices=DIRECTION, max_length=255, verbose_name="Направление", default="Среднее по популярности")
 
     def __str__(self):
-        return f'Отель: {self.name}. Местонахождение: {self.region.name}'
+        return f'Отель: {self.name}. Направление: {self.direction}. Местонахождение: {self.region.name}'
     
     class Meta:
         verbose_name = 'Отель'
@@ -188,11 +193,6 @@ class Booking(models.Model):
                 if self.hotel.pk is price.hotel.pk:
                     a = Booking.objects.filter(pk=self.pk).update(pay=price.price, result_sum=price.price*self.nights)
                     print(f'change {price.price}')
-    # def clean(self):
-    #     self.is_cleaned = True
-    #     if not self.check_room_is_free(self.hotel_room):
-    #         raise ValidationError("Комната не свободна!")
-    #     super(RoomOccupancy, self).clean()
 
     def __str__(self):
         return f"{self.date_check_in} - {self.date_of_departure} | Номер: {self.hotel_room.name}"
@@ -200,6 +200,7 @@ class Booking(models.Model):
     class Meta:
         verbose_name = 'Бронирование'
         verbose_name_plural = 'Бронирования'
+
 
 
 # signals
