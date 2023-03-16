@@ -59,3 +59,7 @@ html, body, .index-page-container {
     margin: 5%;
     font-size: xxx-large;
 }
+
+form button {
+    margin-top: 3rem;
+}
