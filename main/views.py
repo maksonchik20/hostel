@@ -107,7 +107,14 @@ def report(request, hotel_id, day, month, year):
     if nights == 0:
         return render(request, "main/reports.html", {'header_text': "Аналитика",
                                                   'report': {
-                                                    'show': False
+                                                    'show': True,
+                                                    'date': date,
+                                                    'hotel_name': hotel.name,
+                                                    'nights': 0,
+                                                    'sell_sum': 0,
+                                                    'load': 0,
+                                                    'adr': 0,
+                                                    'revpar': 0
                                                   }})
     
     load = int(nights / total_rooms * 10000) / 100
