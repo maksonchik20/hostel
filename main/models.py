@@ -186,7 +186,7 @@ class Booking(models.Model):
             for price in CostPrice.objects.all():
                 print(self.hotel.pk, price.hotel.pk)
                 if self.hotel.pk is price.hotel.pk:
-                    a = Booking.objects.filter(pk=self.pk).update(pay=price.price, result_sum=price.price*self.cnt_people)
+                    a = Booking.objects.filter(pk=self.pk).update(pay=price.price, result_sum=price.price*self.nights)
                     print(f'change {price.price}')
     # def clean(self):
     #     self.is_cleaned = True
