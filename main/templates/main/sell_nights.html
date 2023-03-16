@@ -3,7 +3,8 @@
 {% block content %}
 <ul>
     
-    <h2>Отчет по бронированиям, где бронь подтверждена на месяц вперед и за последние 5 дней за вычетом скидок</h1>
+    <h2>Отчет проданных ночей и суммы продаж</h1>
+    <p>бронь подтверждена на месяц вперед и за последние 5 дней за вычетом скидок</p>
     {% for hotel in hotels %}
         <h2><a href="/admin/main/hotel/{{hotel.hotel_id}}/change/">{{hotel.hotel}} (сумма продаж: {{hotel.result_sum}})</a></h2> 
         <table class="table">
@@ -13,7 +14,6 @@
               <th scope="col">Продано ночей:</th>
             </tr>
             {% for data in hotel.info %}
-            
                 <tr>
                     <td scope="row">{{data.date.day}}.{{data.date.month}}.{{data.date.year}}</td>
                     <td scope="row">{{data.sums}}</td>
