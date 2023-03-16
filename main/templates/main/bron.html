@@ -1,15 +1,26 @@
 {% extends 'main/index.html' %}
 
 {% block content %}
+<table class="table">
+  <tr>
+    <th scope="col">Заказчик:</th>
+    <th scope="col">Отель:</th>
+    <th scope="col">Номер:</th>
+    <th scope="col">Дата заезда:</th>
+    <th scope="col">Дата выезда:</th>
+    <th scope="col">Стоимость:</th>
+    <th scope="col">Бронь подтверждена:</th>
+  </tr>
   {% for o in occ %}
-  <div>
-    <h1 class="lilpad">Заказчик: {{o.client}}</h1>
-    <h3 class="morpad">Отель: {{o.hotel}}</h3>
-    <h3 class="morpad">Номер: {{o.hotel_room.name}}</h3>
-    <h3 class="morpad">Дата заезда: {{o.date_check_in}}</h3>
-    <h3 class="morpad">Дата выезда: {{o.date_of_departure}}</h3>
-    <h3 class="morpad">Стоимость: {{o.pay}}</h3>
-    <h3 class="morpad">Бронь подтверждена: {% if o.flag %}Да{% else %}Нет{% endif %}</h3>
-  </div>
-{% endfor %}
+  <tr>
+    <th scope="row">{{o.client}}</th>
+    <td >{{o.hotel}}</td>
+    <td >{{o.hotel_room.name}}</td>
+    <td >{{o.date_check_in}}</td>
+    <td >{{o.date_of_departure}}</td>
+      <td >{{o.pay}}</td>
+        <td >{% if o.flag %}Да{% else %}Нет{% endif %}</td>
+  </tr>
+  {% endfor %}
+</table>
 {% endblock %}
