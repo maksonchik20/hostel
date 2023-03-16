@@ -10,14 +10,14 @@
               <th scope="col">Дата:</th>
               <th scope="col">Продажи:</th>
             </tr>
-        {% for data in hotel.info %}
-        
-            <tr>
-                <td scope="row">{{data.date.day}}.{{data.date.month}}.{{data.date.year}}</td>
-                <td scope="row">{{data.sums}}</td>
-            </tr>
-        {% endfor %}
-    </table>
+            {% for data in hotel.info %}
+            
+                <tr>
+                    <td scope="row">{{data.date.day}}.{{data.date.month}}.{{data.date.year}}</td>
+                    <td scope="row">{{data.sums}}</td>
+                </tr>
+            {% endfor %}
+        </table>
     {% endfor %}
 </ul>
 {% endblock %}
