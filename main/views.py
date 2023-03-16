@@ -65,8 +65,8 @@ def index(request):
         'table': table,
         'export_formats': ['xls', 'json', 'xlsx', 'yaml']
         }
-    create_data()
-    print('good create')
+    # create_data()
+    # print('good create')
     # Booking.objects.all().delete()
     return render(request, 'main/index.html', data)
 
@@ -116,6 +116,7 @@ def report(request):
             a = Booking.objects.filter(hotel=hotel, date_check_in__lte=date_now + timedelta(days=i), date_of_departure__gte=date_now + timedelta(days=i)) # date_check_in__range=(date(2023,3,22), date(2023,3,24))
             report[-1].rooms.append(HotelReport.RoomReport(date=date_now + timedelta(days=i), money_sum=0, orders_sum=0))
             for el in a:
+<<<<<<< HEAD
                 report[-1].rooms[-1].money_sum += el.pay
                 report[-1].rooms[-1].orders_sum += 1
                 report[-1].total_money_sum += el.pay
@@ -123,4 +124,10 @@ def report(request):
                 # print(data['info'][-1])
 
     return render(request, 'main/reports.html', {**data,  **{"hotels": report}})
+=======
+                data['hotels'][-1]['info'][-1]['sums'] += el.pay
+                data['hotels'][-1]['result_sum'] += el.pay
+                
+    return render(request, 'main/reports.html', data)
+>>>>>>> a09323d432df9031deb4e4ef621473298d197800
 
