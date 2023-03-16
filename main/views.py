@@ -92,7 +92,7 @@ def bron(request):
     return render(request, 'main/bron.html', data)
 
 def report(request):
-    data = {'hotels': []}
+    data = {'hotels': [],  'header_text': "Аналитика",}
     date_now = datetime.now()
     for hotel in Hotel.objects.all():
         data['hotels'].append({'hotel': hotel.name, 'info': [], 'result_sum': 0}) 
