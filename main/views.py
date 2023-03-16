@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from .models import Client, Hotel, HotelRoom, Booking, Region
+from .models import Client, Hotel, HotelRoom, Booking, Pays, Region
 from django.views.generic import ListView
 from .tables import ClientTable
 from django_tables2.export.export import TableExport

@@ -7,6 +7,7 @@ class ManageHotelForm(forms.Form):
 
 class ManageInForm(forms.Form):
     room = forms.ModelChoiceField(queryset=None)
+    people = forms.ModelMultipleChoiceField(queryset=Client.objects.all())
 
     def __init__(self, *args, **kwargs):
         queryset = kwargs.pop('queryset', None)
@@ -16,6 +17,7 @@ class ManageInForm(forms.Form):
 
 class ManageOutForm(forms.Form):
     room = forms.ModelChoiceField(queryset=None)
+    people = forms.ModelMultipleChoiceField(queryset=Client.objects.all())
 
     def __init__(self, *args, **kwargs):
         queryset = kwargs.pop('queryset', None)

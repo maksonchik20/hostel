@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from .forms import ManageInForm, ManageHotelForm, ManageOutForm
-from .models import CheckIn
+from .models import CheckIn, CheckOut
 from django.http import HttpResponseRedirect
 from main.models import Booking, Hotel
 import datetime
@@ -55,9 +55,15 @@ def manage_out_room(request, id):
             # ...
             # redirect to a new URL:
 
-            room = form.cleaned_data["room"]
+            brone = form.cleaned_data["room"]
+            hotel = Hotel.objects.get(pk=id)
 
-            print(room)
+            CheckOut.objects.create(
+                date_out=datetime.datetime.now(),
+                brone=brone,
+                hotel=hotel,
+                room=brone.hotel_room
+            ).peoples.set([brone.client.id])
             
             return HttpResponseRedirect('/managing')
  

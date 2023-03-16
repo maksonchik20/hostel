@@ -1,0 +1,24 @@
+{% extends 'main/index.html' %}
+
+{% block content %}
+<table>
+    <tr>
+      <th>Отель:</th>
+      {% for hotel in hotels %}
+      <th>{{hotel.name}}</th>
+      {% endfor %}
+    </tr>
+    <tr>
+        <th>Категория:</th>
+        {% for hotel in hotels %}
+        <th></th>
+        {% endfor %}
+      </tr>
+      <tr>
+        <th>Стандарт</th>
+        {% for hotel in hotels %}
+        <th></th>
+        {% endfor %}
+      </tr>
+  </table>
+{% endblock %}
