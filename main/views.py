@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from .models import Client, Hotel, HotelRoom, Booking, Pays, Region
+from .models import Client, Hotel, HotelRoom, Booking, Pays, Region,CostPrice
 from django.views.generic import ListView
 from .tables import ClientTable
 from django_tables2.export.export import TableExport
@@ -8,7 +8,8 @@ from django_tables2.config import RequestConfig
 import random
 import json
 from datetime import date, datetime, timedelta
-from session4.models import CostPrice
+# from session4.models import CostPrice
+
 
 
 def create_data():
@@ -62,8 +63,8 @@ def index(request):
         'table': table,
         'export_formats': ['xls', 'json', 'xlsx', 'yaml']
         }
-    # create_data()
-    # print('good create')
+    create_data()
+    print('good create')
     # Booking.objects.all().delete()
     return render(request, 'main/index.html', data)
 

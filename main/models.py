@@ -1,9 +1,29 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
+
+# from session4.models import CostPrice
 # from phonenumber_field.modelfields import PhoneNumberField
 
 
+
+
+class CostPrice(models.Model):
+    CAT = (
+        ('Стандарт', 'Стандарт'),
+        ('Люкс', 'Люкс'),
+        ('Апартамент', 'Апартамент')
+    )
+    hotel = models.ForeignKey("Hotel", on_delete=models.PROTECT, verbose_name='Отель')
+    cat = models.CharField(choices=CAT, verbose_name="Категория", max_length=255)
+    price = models.PositiveIntegerField(verbose_name='Цена')
+
+    def __str__(self):
+        return f"В отеле {self.hotel.name} категория {self.cat} стоит {self.price} "
+
+    class Meta:
+        verbose_name = 'Цена номера по категории'
+        verbose_name_plural = 'Цены номеров в разрезе категорий'
 
 # class User(AbstractUser):
 #     phone = models.CharField(max_length=255, null=True, blank=True)
@@ -149,20 +169,25 @@ class Booking(models.Model):
     hotel_room = models.ForeignKey(HotelRoom, on_delete=models.PROTECT, verbose_name="Комната")
     nights = models.PositiveIntegerField(help_text="Вы можете заполнить поле самостоятельно или оно заполнится само после сохранения на основе данных заезда и выезда", verbose_name="Ночей", null=True, blank=True)
     pay = models.PositiveIntegerField(verbose_name="Стоимость", null=True, blank=True, help_text="Вы можете заполнить поле самостоятельно или оно заполнится автоматически после сохранения на основе данных стоимости номера. Результат вычислений можно увидеть, сохранив запись и вернувшись обратно или просто нажать 'Сохранить и продолжить редактирование'")
+    cnt_people = models.PositiveIntegerField(verbose_name="Количество людей", default=1)
     result_sum = models.PositiveIntegerField(verbose_name="Итоговая цена", null=True, blank=True, help_text="Вы можете заполнить поле самостоятельно или оно заполнится автоматически после сохранения на основе данных стоимости номера и количестве людей. Результат вычислений можно увидеть, сохранив запись и вернувшись обратно или просто нажать 'Сохранить и продолжить редактирование'")
     flag = models.BooleanField(verbose_name="Бронь подтверждена", default=False)
 
     def save(self, *args, **kwargs):
+        super(Booking, self).save(*args, **kwargs)
         pay_changed = False
         if not self.pk: # new object
             pay_changed = True
         else:
             orig_obj = Booking.objects.get(pk=self.pk)
-            if orig_obj.name != self.name:
+            if orig_obj.pay != self.pay:
                 pay_changed = True
-        if pay_changed:
-            print('change')
-        super(Booking, self).save(*args, **kwargs)
+        if not pay_changed:
+            for price in CostPrice.objects.all():
+                print(self.hotel.pk, price.hotel.pk)
+                if self.hotel.pk is price.hotel.pk:
+                    a = Booking.objects.filter(pk=self.pk).update(pay=price.price, result_sum=price.price*self.cnt_people)
+                    print(f'change {price.price}')
     # def clean(self):
     #     self.is_cleaned = True
     #     if not self.check_room_is_free(self.hotel_room):
@@ -187,7 +212,6 @@ def update_stock(sender, instance, **kwargs):
     # print(kwargs)
     instance.nights = (instance.date_of_departure - instance.date_check_in).days
     booking = Booking.objects.get(pk=instance.pk)
-    print(booking.pay, instance.pay)
     if kwargs['created']:
         Pays.objects.create(booking=booking, sums=instance.pay, prepayment=0)
     post_save.disconnect(update_stock, sender=Booking)
