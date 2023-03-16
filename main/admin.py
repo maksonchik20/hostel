@@ -49,14 +49,14 @@ class BookingAdmin(admin.ModelAdmin):
 class HotelRoomAdmin(admin.ModelAdmin):
     readonly_fields = ('users', )
 
-class FriendshipInline(admin.TabularInline):
-    model = Pays
+# class FriendshipInline(admin.TabularInline):
+#     model = Pays
 
 class PaysAdmin(admin.ModelAdmin):
     readonly_fields = ('created_at', )
-    inlines = [
-        FriendshipInline,
-    ]
+    # inlines = [
+    #     FriendshipInline,
+    # ]
 
 
 admin.site.register(Client, CustomClient)
