@@ -3,6 +3,6 @@ def calculate_price_with_sale(ty, price):
         case "Популярное":
             return price
         case "Среднее по популярности":
-            return price * 0.9
+            return price
         case "Непопулярное":
-            return price * 0.8
+            return price * 0.9

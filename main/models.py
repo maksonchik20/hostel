@@ -1,9 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
-
-# from session4.models import CostPrice
-# from phonenumber_field.modelfields import PhoneNumberField
+from utils.sale import calculate_price_with_sale
 
 
 DIRECTION = (
@@ -11,6 +9,19 @@ DIRECTION = (
     ('Среднее по популярности', 'Среднее по популярности'),
     ('Непопулярное', 'Непопулярное')
 )
+
+class DeadSeason(models.Model):
+    hotel = models.OneToOneField('Hotel', on_delete=models.CASCADE, verbose_name='Отель')
+    date_start = models.DateField(verbose_name='Дата начала Мертвого сезона')
+    date_end = models.DateField(verbose_name='Дата окончания мертвого сезона')
+
+    def __str__(self):
+        return f"у отеля {self.hotel.name} мертвый сезон с {self.date_start} по {self.date_end}"
+
+    class Meta:
+        verbose_name = 'Период мертвого сезона'
+        verbose_name_plural = 'Периоды мертвого сезона'
+
 
 class CostPrice(models.Model):
     CAT = (
@@ -175,7 +186,7 @@ class Booking(models.Model):
     nights = models.PositiveIntegerField(help_text="Вы можете заполнить поле самостоятельно или оно заполнится само после сохранения на основе данных заезда и выезда", verbose_name="Ночей", null=True, blank=True)
     pay = models.PositiveIntegerField(verbose_name="Стоимость", null=True, blank=True, help_text="Вы можете заполнить поле самостоятельно или оно заполнится автоматически после сохранения на основе данных стоимости номера. Результат вычислений можно увидеть, сохранив запись и вернувшись обратно или просто нажать 'Сохранить и продолжить редактирование'")
     cnt_people = models.PositiveIntegerField(verbose_name="Количество людей", default=1)
-    result_sum = models.PositiveIntegerField(verbose_name="Итоговая цена", null=True, blank=True, help_text="Вы можете заполнить поле самостоятельно или оно заполнится автоматически после сохранения на основе данных стоимости номера и количестве людей. Результат вычислений можно увидеть, сохранив запись и вернувшись обратно или просто нажать 'Сохранить и продолжить редактирование'")
+    result_sum = models.PositiveIntegerField(verbose_name="Итоговая цена (может выводиться со скидкой в зависимости от периода мертвого сезона отеля и его направления)", null=True, blank=True, help_text="Вы можете заполнить поле самостоятельно или оно заполнится автоматически после сохранения на основе данных стоимости номера и количестве людей. Результат вычислений можно увидеть, сохранив запись и вернувшись обратно или просто нажать 'Сохранить и продолжить редактирование'")
     flag = models.BooleanField(verbose_name="Бронь подтверждена", default=False)
 
     def save(self, *args, **kwargs):
@@ -189,10 +200,13 @@ class Booking(models.Model):
                 pay_changed = True
         if not pay_changed:
             for price in CostPrice.objects.all():
-                print(self.hotel.pk, price.hotel.pk)
+                result_sum = price.price*self.nights
                 if self.hotel.pk is price.hotel.pk:
-                    a = Booking.objects.filter(pk=self.pk).update(pay=price.price, result_sum=price.price*self.nights)
-                    print(f'change {price.price}')
+                    hotel_date_dead = DeadSeason.objects.get(hotel=self.hotel)
+                    if self.date_check_in < hotel_date_dead.date_end and self.date_check_in > hotel_date_dead.date_start:
+                        a = Booking.objects.filter(pk=self.pk).update(pay=price.price, result_sum=result_sum * 0.8)
+                    else:
+                        a = Booking.objects.filter(pk=self.pk).update(pay=price.price, result_sum=calculate_price_with_sale(self.hotel.direction, result_sum))
 
     def __str__(self):
         return f"{self.date_check_in} - {self.date_of_departure} | Номер: {self.hotel_room.name}"
