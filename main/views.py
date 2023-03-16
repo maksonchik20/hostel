@@ -97,7 +97,7 @@ def bron(request):
 def report(request, hotel_id, day, month, year):
     date = datetime(year=year, month=month, day=day)
     hotel = Hotel.objects.get(pk=hotel_id)
-    bookings = Booking.objects.filter(hotel=hotel, date_check_in__lte=date, date_of_departure__gte=date) # date_check_in__range=(date(2023,3,22), date(2023,3,24))
+    bookings = Booking.objects.filter(hotel=hotel, date_check_in__lte=date, date_of_departure__gte=date, flag=True) # date_check_in__range=(date(2023,3,22), date(2023,3,24))
     nights = 0
     sell_sum = 0
     total_rooms = len(HotelRoom.objects.filter(hotel=hotel))
