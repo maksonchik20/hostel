@@ -1,23 +1,31 @@
 {% extends 'main/index.html' %}
 
+{% load mathfilters %}
+
 {% block content %}
 <ul>
     
     {% for hotel in hotels %}
-        <h2>{{hotel.hotel}} (сумма продаж: {{hotel.result_sum}})</h2> 
+        <h2>{{hotel.hotel}} (сумма продаж: {{hotel.total_money_sum}})</h2> 
         <table class="table">
             <tr>
               <th scope="col">Дата:</th>
               <th scope="col">Продажи:</th>
+              <th scope="col">ADR:</th>
             </tr>
-            {% for data in hotel.info %}
-            
-                <tr>
-                    <td scope="row">{{data.date.day}}.{{data.date.month}}.{{data.date.year}}</td>
-                    <td scope="row">{{data.sums}}</td>
-                </tr>
-            {% endfor %}
-        </table>
+        {% for room in hotel.rooms %}
+        
+            <tr>
+                <td scope="row">{{room.date.day}}.{{room.date.month}}.{{room.date.year}}</td>
+                <td scope="row">{{room.money_sum}}</td>
+                {% if room.orders_sum != 0 %}
+                    <td scope="row">{{room.money_sum|div:room.orders_sum}}</td>
+                {% else %}
+                    <td scope="row">{{room.money_sum}}</td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+    </table>
     {% endfor %}
 </ul>
 {% endblock %}

@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'main',
     'session3',
     'session4',
+    'mathfilters',
     
     'crispy_forms',
     'captcha',
