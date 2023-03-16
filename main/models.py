@@ -152,6 +152,17 @@ class Booking(models.Model):
     result_sum = models.PositiveIntegerField(verbose_name="Итоговая цена", null=True, blank=True, help_text="Вы можете заполнить поле самостоятельно или оно заполнится автоматически после сохранения на основе данных стоимости номера и количестве людей. Результат вычислений можно увидеть, сохранив запись и вернувшись обратно или просто нажать 'Сохранить и продолжить редактирование'")
     flag = models.BooleanField(verbose_name="Бронь подтверждена", default=False)
 
+    def save(self, *args, **kwargs):
+        pay_changed = False
+        if not self.pk: # new object
+            pay_changed = True
+        else:
+            orig_obj = Booking.objects.get(pk=self.pk)
+            if orig_obj.name != self.name:
+                pay_changed = True
+        if pay_changed:
+            print('change')
+        super(Booking, self).save(*args, **kwargs)
     # def clean(self):
     #     self.is_cleaned = True
     #     if not self.check_room_is_free(self.hotel_room):
