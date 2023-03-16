@@ -92,7 +92,7 @@ def bron(request):
     return render(request, 'main/bron.html', data)
 
 def report(request):
-    data = {'hotels': []}
+    data = {'hotels': [],  'header_text': "Аналитика",}
     date_now = datetime.now()
     for hotel in Hotel.objects.all():
         data['hotels'].append({'hotel': hotel.name, 'info': [], 'result_sum': 0}) 
@@ -100,11 +100,11 @@ def report(request):
             a = Booking.objects.filter(hotel=hotel, date_check_in__lte=date_now + timedelta(days=i), date_of_departure__gte=date_now + timedelta(days=i)) # date_check_in__range=(date(2023,3,22), date(2023,3,24))
             data['hotels'][-1]['info'].append({'date': date_now + timedelta(days=i), 'sums': 0})
             for el in a:
-                print(data)
+
                 data['hotels'][-1]['info'][-1]['sums'] += el.pay
                 data['hotels'][-1]['result_sum'] += el.pay
                 # data['info'][-1]['sums'] += el.pay
                 # print(data['info'][-1])
-    print(data)
+
     return render(request, 'main/reports.html', data)
 
