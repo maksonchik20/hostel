@@ -148,7 +148,8 @@ class Booking(models.Model):
     date_of_departure = models.DateField(verbose_name="Дата выезда")
     hotel_room = models.ForeignKey(HotelRoom, on_delete=models.PROTECT, verbose_name="Комната")
     nights = models.PositiveIntegerField(help_text="Вы можете заполнить поле самостоятельно или оно заполнится само после сохранения на основе данных заезда и выезда", verbose_name="Ночей", null=True, blank=True)
-    pay = models.PositiveIntegerField(verbose_name="Стоимость", null=True, blank=True)
+    pay = models.PositiveIntegerField(verbose_name="Стоимость", null=True, blank=True, help_text="Вы можете заполнить поле самостоятельно или оно заполнится автоматически после сохранения на основе данных стоимости номера. Результат вычислений можно увидеть, сохранив запись и вернувшись обратно или просто нажать 'Сохранить и продолжить редактирование'")
+    result_sum = models.PositiveIntegerField(verbose_name="Итоговая цена", null=True, blank=True, help_text="Вы можете заполнить поле самостоятельно или оно заполнится автоматически после сохранения на основе данных стоимости номера и количестве людей. Результат вычислений можно увидеть, сохранив запись и вернувшись обратно или просто нажать 'Сохранить и продолжить редактирование'")
     flag = models.BooleanField(verbose_name="Бронь подтверждена", default=False)
 
     # def clean(self):
@@ -159,6 +160,7 @@ class Booking(models.Model):
 
     def __str__(self):
         return f"{self.date_check_in} - {self.date_of_departure} | Номер: {self.hotel_room.name}"
+    
     class Meta:
         verbose_name = 'Бронирование'
         verbose_name_plural = 'Бронирования'
@@ -171,8 +173,10 @@ from django.dispatch import receiver
 
 @receiver(post_save, sender=Booking)
 def update_stock(sender, instance, **kwargs):
+    # print(kwargs)
     instance.nights = (instance.date_of_departure - instance.date_check_in).days
     booking = Booking.objects.get(pk=instance.pk)
+    print(booking.pay, instance.pay)
     if kwargs['created']:
         Pays.objects.create(booking=booking, sums=instance.pay, prepayment=0)
     post_save.disconnect(update_stock, sender=Booking)

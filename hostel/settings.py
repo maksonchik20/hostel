@@ -42,6 +42,7 @@ INSTALLED_APPS = [
 
     'main',
     'session3',
+    'session4',
     
     'crispy_forms',
     'captcha',
