@@ -175,3 +175,18 @@ def _unused_report(request):
 
     return render(request, 'main/reports.html', {**data,  **{"hotels": report}})
 
+def report_sell_nights(request):
+    data = {'hotels': [],  'header_text': "Аналитика",}
+    date_now = datetime.now()
+    for hotel in Hotel.objects.all():
+        data['hotels'].append({'hotel': hotel.name, 'info': [], 'result_sum': 0, 'hotel_id': hotel.pk}) 
+        for i in range(-5, 31):
+            a = Booking.objects.filter(hotel=hotel, date_check_in__lte=date_now + timedelta(days=i), date_of_departure__gte=date_now + timedelta(days=i), flag=True) # date_check_in__range=(date(2023,3,22), date(2023,3,24))
+            data['hotels'][-1]['info'].append({'date': date_now + timedelta(days=i), 'sums': 0, 'nights': 0})
+            for el in a:
+                data['hotels'][-1]['info'][-1]['sums'] += el.pay
+                data['hotels'][-1]['info'][-1]['nights'] += 1
+                print(el.nights)
+                data['hotels'][-1]['result_sum'] += el.pay
+                
+    return render(request, 'main/sell_nights.html', data)
