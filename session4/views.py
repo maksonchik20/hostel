@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import CostPrice
+from main.models import CostPrice
 
 # Create your views here.
 
