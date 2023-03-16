@@ -38,14 +38,17 @@ from django.dispatch import receiver
 def update_check_out(sender, instance, **kwargs):
     users = ""
     room = HotelRoom.objects.filter(pk=instance.room.pk)
-    users_in = room[0].users.split('\n')
-    result_users_in = users_in.copy()
-    for people in instance.peoples.all():
-        for user_in in users_in:
-            if people.fio in user_in:
-                result_users_in.remove(user_in)
-    users_in = "\n".join(result_users_in)
-    room.update(status="Свободный (грязный)", users=users_in)
+    if room[0].users:
+        users_in = room[0].users.split('\n')
+        result_users_in = users_in.copy()
+        for people in instance.peoples.all():
+            for user_in in users_in:
+                if people.fio in user_in:
+                    result_users_in.remove(user_in)
+        users_in = "\n".join(result_users_in)
+        room.update(status="Свободный (грязный)", users=users_in)
+    else:
+        room.update(status="Свободный (грязный)", users=None)
     post_save.disconnect(update_check_out, sender=CheckOut)
     instance.save()
     post_save.connect(update_check_out, sender=CheckOut)

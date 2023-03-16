@@ -3,9 +3,12 @@
 {% block content %}
     <form action="{% url 'manage_in_hotel' %}" role="form" method="post">
         {% csrf_token %}
-        {{ form.hotel }}
-        <button class="btn btn-success" type="submit">
-            Оформить
+        <div class="morpad">
+            <h1>Отель:</h1>
+            {{ form.hotel }}
+        </div>
+        <button class="btn btn-success morpad" type="submit">
+            Выбрать
         </button>
     </form>
 {% endblock %}
