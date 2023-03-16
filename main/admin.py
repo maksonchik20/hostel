@@ -48,9 +48,16 @@ class BookingAdmin(admin.ModelAdmin):
     pass
 class HotelRoomAdmin(admin.ModelAdmin):
     readonly_fields = ('users', )
+
+class FriendshipInline(admin.TabularInline):
+    model = Pays
+
 class PaysAdmin(admin.ModelAdmin):
     readonly_fields = ('created_at', )
-    
+    inlines = [
+        FriendshipInline,
+    ]
+
 
 admin.site.register(Client, CustomClient)
 admin.site.register(HotelRoom, HotelRoomAdmin)
