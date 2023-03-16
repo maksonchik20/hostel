@@ -133,6 +133,7 @@ class Pays(models.Model):
     class Meta:
         verbose_name = 'Оплата'
         verbose_name_plural = 'Оплаты'
+        
 
 class Booking(models.Model):
     # @staticmethod
