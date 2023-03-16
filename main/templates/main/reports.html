@@ -4,8 +4,9 @@
 <ul>
     
     {% for hotel in hotels %}
-        <h2>{{hotel}}</h2> 
-        {% for data in info %}
+        <h2>{{hotel.hotel}}</h2> 
+        {% for data in hotel.info %}
+        
             <li>
                 Дата: {{data.date.day}}.{{data.date.month}}.{{data.date.year}}
                 Продажи: {{data.sums}}

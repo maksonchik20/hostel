@@ -85,15 +85,19 @@ def bron(request):
     return render(request, 'main/bron.html', data)
 
 def report(request):
-    data = {'info': [], 'hotels': []}
+    data = {'hotels': []}
     date_now = datetime.now()
     for hotel in Hotel.objects.all():
-        data['hotels'].append(hotel.name) 
-        for i in range(3, 6):
-            a = Booking.objects.filter(hotel=hotel, date_check_in__lte=date_now + timedelta(days=i), date_of_departure__gt=date_now + timedelta(days=i)) # date_check_in__range=(date(2023,3,22), date(2023,3,24))
-            data['info'].append({'date': date_now + timedelta(days=i), 'sums': 0})
+        data['hotels'].append({'hotel': hotel.name, 'info': [], 'result_sum': 0}) 
+        for i in range(-5, 31):
+            a = Booking.objects.filter(hotel=hotel, date_check_in__lte=date_now + timedelta(days=i), date_of_departure__gte=date_now + timedelta(days=i)) # date_check_in__range=(date(2023,3,22), date(2023,3,24))
+            data['hotels'][-1]['info'].append({'date': date_now + timedelta(days=i), 'sums': 0})
             for el in a:
-                data['info'][-1]['sums'] = el.pay
+                print(data)
+                data['hotels'][-1]['info'][-1]['sums'] += el.pay
+                data['hotels'][-1]['result_sum'] += el.pay
+                # data['info'][-1]['sums'] += el.pay
+                # print(data['info'][-1])
     print(data)
     return render(request, 'main/reports.html', data)
 
