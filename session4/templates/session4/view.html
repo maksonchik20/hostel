@@ -1,0 +1,36 @@
+{% extends 'main/index.html' %}
+
+{% block content %}
+<table class="table">
+  <tr>
+    <th scope="col">Отель:</th>
+    {% for price in prices_standard %}
+    <th scope="col">{{price.hotel}}</th>
+    {% endfor %}
+  </tr>
+  <tr>
+    <th scope="col">Категория:</th>
+    {% for price in prices_standard %}
+    <td scope="row"></td>
+    {% endfor %}
+  </tr>
+  <tr>
+    <td scope="col">Стандарт</td>
+    {% for price in prices_standard %}
+    <td scope="row">{{price.price}}</td>
+    {% endfor %}
+  </tr>
+  <tr>
+    <td scope="col">Люкс</td>
+    {% for price in prices_luks %}
+    <td scope="row">{{price.price}}</td>
+    {% endfor %}
+  </tr>
+  <tr>
+    <td scope="col">Апартамент</td>
+    {% for price in prices_app %}
+    <td scope="row">{{price.price}}</td>
+    {% endfor %}
+  </tr>
+</table>
+{% endblock %}

@@ -5,13 +5,19 @@
     
     {% for hotel in hotels %}
         <h2>{{hotel.hotel}}</h2> 
+        <table class="table">
+            <tr>
+              <th scope="col">Дата:</th>
+              <th scope="col">Продажи:</th>
+            </tr>
         {% for data in hotel.info %}
         
-            <li>
-                Дата: {{data.date.day}}.{{data.date.month}}.{{data.date.year}}
-                Продажи: {{data.sums}}
-            </li>
+            <tr>
+                <td scope="row">{{data.date.day}}.{{data.date.month}}.{{data.date.year}}</td>
+                <td scope="row">{{data.sums}}</td>
+            </tr>
         {% endfor %}
+    </table>
     {% endfor %}
 </ul>
 {% endblock %}
