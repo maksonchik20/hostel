@@ -1,0 +1,18 @@
+{% extends 'main/index.html' %}
+
+{% block content %}
+    <form action="{% url 'report' %}" role="form" method="post">
+        {% csrf_token %}
+        <div class="morpad">
+            <h1>Отель:</h1>
+            {{ form.hotel }}
+        </div>
+        <div class="morpad">
+            <h1>Дата:</h1>
+            {{ form.date }}
+        </div>
+        <button class="btn btn-success morpad" type="submit">
+            Сгенерировать отчет
+        </button>
+    </form>
+{% endblock %}

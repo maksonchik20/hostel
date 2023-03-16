@@ -3,29 +3,37 @@
 {% load mathfilters %}
 
 {% block content %}
-<ul>
-    
-    {% for hotel in hotels %}
-        <h2>{{hotel.hotel}} (сумма продаж: {{hotel.total_money_sum}})</h2> 
-        <table class="table">
-            <tr>
-              <th scope="col">Дата:</th>
-              <th scope="col">Продажи:</th>
-              <th scope="col">ADR:</th>
-            </tr>
-        {% for room in hotel.rooms %}
-        
-            <tr>
-                <td scope="row">{{room.date.day}}.{{room.date.month}}.{{room.date.year}}</td>
-                <td scope="row">{{room.money_sum}}</td>
-                {% if room.orders_sum != 0 %}
-                    <td scope="row">{{room.money_sum|div:room.orders_sum}}</td>
-                {% else %}
-                    <td scope="row">{{room.money_sum}}</td>
-                {% endif %}
-            </tr>
-        {% endfor %}
+<div class="morpad">
+    <h1>Анализ эффективности продаж</h1>
+    <table class="table">
+        <tr>
+            <th scope="col">Дата: {{report.date.day}}.{{report.date.month}}.{{report.date.year}}</th>
+            <th scope="col"></th>
+          </tr>
+        <tr>
+          <th scope="col">Отель: {{report.hotel_name}}</th>
+          <th scope="col"></th>
+        </tr>
+        <tr>
+            <td scope="row">Количество проданых ночей</td>
+            <td scope="row">{{report.nights}}</td>
+        </tr>
+        <tr>
+            <td scope="row">Общая сумма продаж</td>
+            <td scope="row">{{report.sell_sum}}</td>
+        </tr>
+        <tr>
+            <td scope="row">% загрузки номерного фонда</td>
+            <td scope="row">{{report.load}}</td>
+        </tr>
+        <tr>
+            <td scope="row">Ср. цена ADR</td>
+            <td scope="row">{{report.adr}}</td>
+        </tr>
+        <tr>
+            <td scope="row">RevPAR</td>
+            <td scope="row">{{report.revpar}}</td>
+        </tr>
     </table>
-    {% endfor %}
-</ul>
+</div>
 {% endblock %}
