@@ -1,0 +1,23 @@
+{% extends 'main/index.html' %}
+
+{% block content %}
+<ul>
+        <h2>Анализ занятости Горничной</h2> 
+        <table class="table">
+            <tr>
+              <th scope="col">ФИО Горничной:</th>
+              <th scope="col">К Уборке:</th>
+              <th scope="col">На уборке:</th>
+              <th scope="col">Убрано:</th>
+            </tr>
+                {% for data in cleaning_data %}
+                <tr>
+                    <td scope="row">{{data.0}}</td>
+                    <td scope="row">{{data.1.to_cleaning}}</td>
+                    <td scope="row">{{data.1.progress}}</td>
+                    <td scope="row">{{data.1.completed}}</td>
+                </tr>
+                {% endfor %}
+        </table>
+</ul>
+{% endblock %}

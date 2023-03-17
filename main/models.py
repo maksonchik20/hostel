@@ -257,7 +257,7 @@ class RequestCleaning(models.Model):
     room = models.ForeignKey(HotelRoom, on_delete=models.CASCADE, verbose_name='Номер к уборке')
     status = models.CharField(choices=STATUS, verbose_name="Статус", max_length=255)
     def __str__(self):
-        return f"{self.date} -- {self.cleaning_woman}. {self.hotel.name} - {self.room.name}. {self.status}"
+        return f"{self.date} -- {self.cleaning_woman}. {self.hotel.name} - Номер: {self.room.name}. Статус: {self.status}"
     
     class Meta:
         verbose_name = 'Работа'

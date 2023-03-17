@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
-from .models import Client, Hotel, HotelRoom, Booking, Pays, Region,CostPrice
+from .models import Client, Hotel, HotelRoom, Booking, Pays, Region,CostPrice, RequestCleaning, Personal, CategoryWork
 from django.views.generic import ListView
 from .tables import ClientTable
 from django_tables2.export.export import TableExport
@@ -197,3 +197,21 @@ def report_sell_nights(request):
                 data['hotels'][-1]['result_sum'] += el.pay
                 
     return render(request, 'main/sell_nights.html', data)
+
+
+def analysis_cleaning(request):
+    data = {'cleaning_data': {}, 'fio': []}
+    for fio_cleaning in Personal.objects.filter(work=CategoryWork.objects.get(name='Горничная')):
+        data['cleaning_data'][f'{fio_cleaning.fio}'] = {'to_cleaning': 0, 'completed': 0, 'progress': 0}
+        data['fio'].append(fio_cleaning.fio)
+    for el in RequestCleaning.objects.all():
+        for fio in data['fio']:
+            if el.cleaning_woman.fio == fio:
+                if el.status == 'К выполнению':
+                    data['cleaning_data'][f'{el.cleaning_woman.fio}']['to_cleaning'] += 1
+                elif el.status == 'На выполнении':
+                    data['cleaning_data'][f'{el.cleaning_woman.fio}']['progress'] += 1
+                elif el.status == 'Выполнена':
+                    data['cleaning_data'][f'{el.cleaning_woman.fio}']['completed'] += 1
+    data['cleaning_data'] = data['cleaning_data'].items()
+    return render(request, 'main/analysis_cleaning.html', data)
