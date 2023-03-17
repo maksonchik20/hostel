@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from .models import Client, Hotel, HotelRoom, Booking, Pays, Region,CostPrice, RequestCleaning, Personal, CategoryWork
+from .models import Client, Hotel, Personal, RequestCleaning, HotelRoom, Booking, Pays, Region,CostPrice
 from django.views.generic import ListView
 from .tables import ClientTable
 from django_tables2.export.export import TableExport
@@ -10,8 +11,9 @@ import json
 from datetime import date, datetime, timedelta
 from dataclasses import dataclass
 from typing import List
-from .forms import ReportSelectForm
+from .forms import ReportSelectForm, WorkSelectForm, WorkApplyForm
 # from session4.models import CostPrice
+from django.db.models import Q
 
 
 
@@ -151,36 +153,24 @@ def report_select(request):
 
     return render(request, "main/reports_select.html", {'form': form, 'header_text': "Аналитика",})
 
-def _unused_report(request):
-    @dataclass
-    class HotelReport:
-        @dataclass
-        class RoomReport:
-            date: datetime
-            money_sum: float
-            orders_sum: int
 
-        hotel: str
-        rooms: List[RoomReport]
-        total_money_sum: float
+def work_select(request):
+    if request.method == 'POST':
+        # create a form instance and populate it with data from the request:
+        form = WorkSelectForm(request.POST)
+        # check whether it's valid:
+        if form.is_valid():
+            # process the data in form.cleaned_data as required
+            # ...
+            # redirect to a new URL:
+            return HttpResponseRedirect(f'/work/{form.cleaned_data["hotel"].id}/{form.cleaned_data["cleaning_woman"].id}')
 
-    report: List[HotelReport] = []
+    # if a GET (or any other method) we'll create a blank form
+    else:
+        form = WorkSelectForm()
 
-    data = {'header_text': "Аналитика",}
-    date_now = datetime.now()
-    for hotel in Hotel.objects.all():
-        report.append(HotelReport(hotel=hotel.name, rooms=[], total_money_sum=0)) 
-        for i in range(-5, 31):
-            a = Booking.objects.filter(hotel=hotel, date_check_in__lte=date_now + timedelta(days=i), date_of_departure__gte=date_now + timedelta(days=i)) # date_check_in__range=(date(2023,3,22), date(2023,3,24))
-            report[-1].rooms.append(HotelReport.RoomReport(date=date_now + timedelta(days=i), money_sum=0, orders_sum=0))
-            for el in a:
-                report[-1].rooms[-1].money_sum += el.pay
-                report[-1].rooms[-1].orders_sum += 1
-                report[-1].total_money_sum += el.pay
-                # data['info'][-1]['sums'] += el.pay
-                # print(data['info'][-1])
+    return render(request, "main/work_select.html", {'form': form, 'header_text': "Формирование заявок на работу",})
 
-    return render(request, 'main/reports.html', {**data,  **{"hotels": report}})
 
 def report_sell_nights(request):
     data = {'hotels': [],  'header_text': "Аналитика",}
@@ -215,3 +205,35 @@ def analysis_cleaning(request):
                     data['cleaning_data'][f'{el.cleaning_woman.fio}']['completed'] += 1
     data['cleaning_data'] = data['cleaning_data'].items()
     return render(request, 'main/analysis_cleaning.html', data)
+def work(request, hotel_id, working_woman_id):
+    hotel = Hotel.objects.get(pk=hotel_id)
+    
+    forms = [
+        {"form": WorkApplyForm(), "room": room.id} 
+        for 
+        room 
+        in 
+        HotelRoom.objects.filter(hotel=hotel).filter(Q(status="Занят (грязный)") | Q(status="Свободный (грязный)")).order_by("name")
+        if 
+        len(RequestCleaning.objects.filter(room=room, hotel=hotel)) == 0
+    ]
+    return render(request, "main/work.html", {'header_text': "Аналитика",
+                                                  'forms': forms, 'hotel_id': hotel_id, "working_woman_id": working_woman_id})
+
+def work_apply(request, hotel_id, working_woman_id, room_id):
+    hotel = Hotel.objects.get(pk=hotel_id)
+    room = HotelRoom.objects.get(pk=room_id, hotel=hotel)
+    working_woman = Personal.objects.get(pk=working_woman_id)
+
+    if request.method == 'POST':
+
+        RequestCleaning.objects.create(
+            date=datetime.now(),
+            cleaning_woman=working_woman,
+            hotel=hotel,
+            room=room,
+            status="К выполнению"
+        )
+
+        return HttpResponseRedirect(f'/work/{hotel_id}/{working_woman_id}')
+    
