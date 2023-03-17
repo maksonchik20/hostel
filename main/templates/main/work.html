@@ -1,0 +1,26 @@
+{% extends 'main/index.html' %}
+
+{% block content %}
+<div class="morpad">
+    <h1>К уборке</h1>
+    <table class="table">
+        <tr>
+            <th scope="col">Номер к уборке:</th>
+            <th scope="col"></th>
+          </tr>
+        {% for form in forms %}
+        <tr>
+            <th scope="col">{{form.room}}</th>
+            <th scope="col">
+                <form action="{% url 'work' hotel_id working_woman_id %}{{ form.room }}/" role="form" method="post">
+                    {% csrf_token %}
+                    <button class="btn btn-success morpad nopadbtn" type="submit">
+                        Создать заявку на уборку
+                    </button>
+                </form>
+            </th>
+          </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

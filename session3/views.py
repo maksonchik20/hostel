@@ -102,7 +102,6 @@ def manage_in_hotel(request):
             # process the data in form.cleaned_data as required
             # ...
             # redirect to a new URL:
-            print(form.cleaned_data["hotel"].id)
             return HttpResponseRedirect(f'/managing/in/{form.cleaned_data["hotel"].id}')
 
     # if a GET (or any other method) we'll create a blank form

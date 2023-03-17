@@ -63,3 +63,7 @@ html, body, .index-page-container {
 form button {
     margin-top: 3rem;
 }
+
+form button.nopadbtn {
+    margin-top: 0rem;
+}
