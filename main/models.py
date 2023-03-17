@@ -223,8 +223,45 @@ class Booking(models.Model):
         verbose_name = 'Бронирование'
         verbose_name_plural = 'Бронирования'
 
+class CategoryWork(models.Model):
+    name = models.CharField(max_length=255, verbose_name='Наименование')
+
+    def __str__(self):
+        return f"{self.name}"
+    
+    class Meta:
+        verbose_name = 'Вид работы'
+        verbose_name_plural = 'Виды работ'
 
 
+class Personal(models.Model):
+    fio = models.CharField(max_length=255, verbose_name="ФИО")
+    work = models.ForeignKey(CategoryWork, on_delete=models.PROTECT, verbose_name="Вид работы")
+
+    def __str__(self):
+        return f"{self.fio} -- {self.work}"
+    
+    class Meta:
+        verbose_name = 'Сотрудник'
+        verbose_name_plural = 'Сотрудники'
+
+class RequestCleaning(models.Model):
+    STATUS = (
+        ('К выполнению', 'К выполнению'),
+        ('На выполнении', 'На выполнении'),
+        ('Выполнена', 'Выполнена')
+    )
+    date = models.DateField(verbose_name='Дата')
+    cleaning_woman = models.ForeignKey(Personal, on_delete=models.CASCADE, verbose_name='ФИО Горничной')
+    hotel = models.ForeignKey(Hotel, verbose_name="Отель", on_delete=models.CASCADE)
+    room = models.ForeignKey(HotelRoom, on_delete=models.CASCADE, verbose_name='Номер к уборке')
+    status = models.CharField(choices=STATUS, verbose_name="Статус", max_length=255)
+    def __str__(self):
+        return f"{self.date} -- {self.cleaning_woman}. {self.hotel.name} - {self.room.name}. {self.status}"
+    
+    class Meta:
+        verbose_name = 'Работа'
+        verbose_name_plural = 'Работы'
 # signals
 
 from django.db.models.signals import post_save, pre_save

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import HotelRoom, Client, Booking, RoomOccupancy, Hotel, Region, Pays, Quests, CostPrice, DeadSeason
+from .models import HotelRoom, Client, Booking, RoomOccupancy, Hotel, Region, Pays, Quests, CostPrice, DeadSeason, Personal, CategoryWork, RequestCleaning
 from django.contrib.auth.admin import UserAdmin
 from django.utils.html import format_html
 
@@ -68,6 +68,9 @@ admin.site.register(Region)
 admin.site.register(Pays, PaysAdmin)
 admin.site.register(Quests)
 admin.site.register(DeadSeason)
+admin.site.register(RequestCleaning)
+admin.site.register(CategoryWork)
+admin.site.register(Personal)
 
 class CostPriceAdmin(admin.ModelAdmin):
     ordering = ['-cat',]
